@@ -1,0 +1,801 @@
+Introduction to Neural Network 
+Algorithm 
+Yinghao Wu Department of Systems and Computational Biology Albert Einstein College of Medicine Fall 2014 
+Outline 
+•Background 
+•Supervised learning (BPNN) 
+•Unsupervised learning (SOM) 
+•Implementation in Matlab 
+
+Outline 
+•Background 
+•Supervised learning (BPNN) 
+•Unsupervised learning (SOM) 
+•Implementation in Matlab 
+
+Biological Inspiration 
+Idea : To make the computer more robust, intelligent, and learn, …Let’s model our computer software (and/or hardware) after the brain 
+
+Neurons in the Brain 
+•Although heterogeneous, at a low level the brain is composed of neurons 
+–A neuron receives input from other neurons (generally thousands) from its synapses 
+–Inputs are approximately summed 
+–When the input exceeds a threshold the neuron sends an electrical spike that travels  that travels from the body, down the axon, to the next neuron(s) 
+
+Neuron Model 
+Axon
+Cell BodyDendrites
+Synapse
+the weight “w” corresponds to the strength of a synap se 
+the cell body is represented by the summation and t he transfer 
+function the neuron output “a”represents the signal on the a xon 
+
+Supervised Learning 
+•It is based on a labeled training set. 
+•The class of each piece of data in training set is known. 
+•Class labels are pre-determined and provided in the training phase. 
+ABA
+BAB
+εε εε Class λλ λλ Class 
+λλ λλ Class λλ λλ Class εε εε Class εε εε Class 
+
+Unsupervised Learning 
+•Input : set of patterns P , from n-dimensional space  S, but 
+little/no information about their classification, e valuation, 
+interesting features, etc.  
+It must learn these by itself!  : ) 
+•Tasks: 
+–Clustering - Group patterns based on similarity 
+–Vector Quantization - Fully divide up S into a small  set of 
+regions (defined by codebook vectors) that also hel ps 
+cluster P . 
+–Feature Extraction - Reduce dimensionality of S by removing unimportant features (i.e. those that do n ot help 
+in clustering P) 
+
+Supervised Vs Unsupervised 
+•Task performed 
+Classification Pattern Recognition 
+•NN model : 
+Preceptron Feed-forward NN 
+“What is the class of this 
+data point?” •Task performed 
+Clustering 
+•NN Model : 
+Self Organizing Maps 
+“What groupings exist in 
+this data?” 
+“How is each data point 
+related to the data set as a whole?” 
+
+Applications 
+•Aerospace 
+–High performance aircraft autopilots, flight path s imulations, 
+aircraft control systems, autopilot enhancements, a ircraft 
+component simulations, aircraft component fault det ectors 
+•Automotive 
+–Automobile automatic guidance systems, warranty act ivity 
+analyzers 
+•Banking 
+–Check and other document readers, credit applicatio n evaluators 
+•Defense 
+–Weapon steering, target tracking, object discrimina tion, facial 
+recognition, new kinds of sensors, sonar, radar and  image signal 
+processing including data compression, feature extr action and 
+noise suppression, signal/image identification 
+•Electronics 
+–Code sequence prediction, integrated circuit chip l ayout, process 
+control, chip failure analysis, machine vision, voi ce synthesis, 
+nonlinear modeling 
+
+Applications 
+•Financial 
+–Real estate appraisal, loan advisor, mortgage scree ning, corporate 
+bond rating, credit line use analysis, portfolio tr ading program, 
+corporate financial analysis, currency price predic tion 
+•Manufacturing 
+–Manufacturing process control, product design and a nalysis, 
+process and machine diagnosis, real-time particle i dentification, 
+visual quality inspection systems, beer testing, we lding quality 
+analysis, paper quality prediction, computer chip q uality analysis, 
+analysis of grinding operations, chemical product d esign analysis, 
+machine maintenance analysis, project bidding, plan ning and 
+management, dynamic modeling of chemical process sy stems 
+•Medical 
+–Breast cancer cell analysis, EEG and ECG analysis, prosthesis 
+design, optimization of transplant times, hospital expense 
+reduction, hospital quality improvement, emergency room test 
+advisement 
+
+Outline 
+•Background 
+•Supervised learning (BPNN) 
+•Unsupervised learning (SOM) 
+•Implementation in Matlab 
+
+Neural Networks 
+/uni25CFArtificial neural network (ANN) is a machine learning approach that models human brain and consists of a number of artificial neurons.
+/uni25CFNeuron in ANNs tend to have fewer connections than biological neurons.
+/uni25CFEach neuron in ANN receives a number of inputs.
+/uni25CFAn activation function is applied to these inputs which resu lts 
+in activation level of neuron (output value of the neuron).
+/uni25CFKnowledge about the learning task is given in the form of examples called training examples.
+
+Contd.. 
+/uni25CFAn Artificial Neural Network is specified by:
+−neuron model : the information processing unit of the NN, 
+−an architecture : a set of neurons and links connecting neurons.
+Each link has a weight, 
+−a learning algorithm : used for training the NN by modifying the 
+weights in order to model a particular learning task correct ly on 
+the training examples.
+/uni25CFThe aim is to obtain a NN that is trained and generalizes well.
+/uni25CFIt should behaves correctly on new instances of the learning task.
+
+Neuron 
+/uni25CFThe neuron is the basic information processing unit  of a 
+NN. It consists of: 
+1 A set of links, describing the neuron inputs, with weights W1, W 2, 
+…, W m
+2 An adder function (linear combiner) for computing the weight ed 
+sum of the inputs: (real numbers) 
+3
+Activation function for limiting the amplitude of the neuron 
+output. Here ‘b’ denotes bias. ∑=
+=m
+1j j   xw u
+j
+ϕ
+) (u  y b+ =ϕ
+
+The Neuron Diagram 
+Input values 
+weights Summing function Bias 
+b
+Activation function Induced 
+Field 
+vOutput 
+yx1
+x2
+xmw2
+wmw1
+/vertellipsis/vertellipsis∑)(−
+ϕ
+
+Neuron Models 
+/uni25CFThe choice of activation function        determines  the 
+neuron model. 
+Examples: /uni25CFstep function: 
+/uni25CFramp function: 
+/uni25CFsigmoid function with z,x,y parameters 
+/uni25CFGaussian function: ϕ
+
+
+−− =
+2
+21exp 
+21)(σµ
+σπ
+ϕvv) exp( 11)(y xv z v+ − ++=
+ϕ
+− − − +><
+=
+otherwise  )) /( ) )( ((  if    if   
+)(
+c d abcv ad v bc v a
+vϕ
+><=cv bcv av if    if   )(
+ϕ
+
+cb
+aStep Function 
+
+c db
+aRamp Function 
+
+Sigmoid function 
+
+Network Architectures 
+/uni25CFThree different classes of network architectures 
+−single-layer feed-forward 
+−multi-layer   feed-forward 
+−recurrent 
+/uni25CFThe architecture of a neural network is linked 
+with the learning algorithm used to train 
+
+Single Layer Feed-forward 
+Input layer 
+of 
+source nodes Output layer 
+of 
+neurons 
+
+Perceptron: Neuron Model 
+(Special form of single layer feed forward) 
+−The perceptron was first proposed by Rosenblatt (1958 ) is a simple 
+neuron that is used to classify its input into one of two  categories. 
+−A perceptron  uses a step function that returns +1 if weighted sum 
+of its input ≥0 and -1 otherwise 
+x1
+x2
+xnw2w1
+wnb (bias) 
+v yϕϕ ϕϕ(v) 
+< −≥ +=0  if  10  if  1) (vvv
+ϕ
+
+Perceptron for Classification 
+/uni25CFThe perceptron is used for binary classification. 
+/uni25CFFirst train a perceptron for a classification task.
+−Find suitable weights in such a way that the traini ng examples are 
+correctly classified. 
+−Geometrically try to find a hyper-plane that separa tes the examples of the 
+two classes. 
+/uni25CFThe perceptron can only model linearly separable classes. 
+/uni25CFWhen the two classes are not linearly separable, it  may be 
+desirable to obtain a linear separator that minimiz es the mean 
+squared error. 
+/uni25CFGiven training examples of classes C 1, C 2  train the perceptron in 
+such a way that : 
+−If the output of the perceptron is +1 then the inpu t is assigned to class C 1
+−If the output  is -1 then the input is assigned to C 2
+
+Learning Process for Perceptron 
+/uni25CFInitially assign random weights to inputs between -0.5 and +0.5
+/uni25CFTraining data is presented to perceptron and its output is observed.
+/uni25CFIf output is incorrect, the weights are adjusted accordingl y 
+using following formula.
+wi ←wi + (a* xi *e), where ‘e’ is error produced 
+and ‘a’ (-1 <a<1) is learning rate 
+−‘a’ is defined as 0 if output is correct, it is +ve, if output is too low and 
+–ve, if output is too high.
+−Once the modification to weights has taken place, the next pi ece of 
+training data is used in the same way.
+−Once all the training data have been applied, the process sta rts again 
+until all the weights are correct and all errors are zero.
+−Each iteration of this process is known as an epoch.
+
+Example: Perceptron to learn OR 
+function 
+/uni25CFInitially consider w1 = -0.2 and w2 = 0.4 
+/uni25CFTraining data say,  x1 = 0 and x2 = 0,  output is 0. 
+/uni25CFCompute y = Step(w1*x1 + w2*x2) = 0. Output is corre ct so 
+weights are not changed. 
+/uni25CFFor training data x1=0 and x2 = 1, output is 1 
+/uni25CFCompute y = Step(w1*x1 + w2*x2) = 0.4 = 1. Output is  correct 
+so weights are not changed. 
+/uni25CFNext training data x1=1 and x2 = 0 and output is 1 
+/uni25CFCompute y = Step(w1*x1 + w2*x2) = - 0.2 = 0.  Output  is 
+incorrect, hence weights are to be changed. 
+/uni25CFAssume a = 0.2 and error  e=1 
+wi  =  wi + (a * xi * e)  gives w1 = 0 and w2 =0.4 
+/uni25CFWith these weights, test the remaining test data. 
+/uni25CFRepeat the process till we get stable result. 
+
+   X 1 
+    1  true    true                    false    true    0    1  X
+2 
+  Boolean function OR – Linearly separable 
+
+Perceptron: Limitations 
+/uni25CFThe perceptron can only model linearly separable functions, 
+−those functions which can be drawn in 2-dim graph and single straight line separates values in two part.
+/uni25CFBoolean functions given below are linearly separable:
+−AND 
+−OR 
+−COMPLEMENT 
+/uni25CFIt cannot model XOR function as it is non linearly separable.
+−When the two classes are not linearly separable, it may be desirable to obtain a linear separator that minimizes the me an 
+squared error.
+
+XOR – Non linearly separable function 
+/uni25CFA typical example of non-linearly separable function is theXOR that computes the logical exclusive or. .
+/uni25CFThis function takes two input arguments with values in {0,1}and returns one output in {0,1}, 
+/uni25CFHere 0 and 1 are encoding of the truth values false and 
+true ,
+/uni25CFThe output is true if and only if the two inputs have 
+different truth values.
+/uni25CFXOR is non linearly separable function which can not be modeled by perceptron.
+/uni25CFFor such functions we have to use multi layer feed-forward network.
+
+These two classes (true and false) cannot be separated using a line. Hence XOR is non linearly separable. Input Output 
+X1 X 2 X 1 XOR   X2 
+0 0 0 
+0 1 1 
+1 0 1 
+1 1 0 
+ 
+   X 1 
+    1  true    false                    false    true    0    1  X
+2 
+ 
+ 
+
+Multi layer feed-forward NN (FFNN) 
+/uni25CFFFNN is a more general network architecture, where there are hidden layers between input and output layers.
+/uni25CFHidden nodes do not directly receive inputs nor send outputs to the external environment.
+/uni25CFFFNNs overcome the limitation of single-layer NN.
+/uni25CFThey can handle non-linearly separable learning tasks.
+Input 
+layer Output 
+layer 
+Hidden Layer 
+3-4-2 Network 
+
+FFNN for XOR 
+/uni25CFThe ANN for XOR has two hidden nodes that realizes this non-li near 
+separation and uses the sign (step) activation function.
+/uni25CFArrows from input nodes to two hidden nodes indicate the dire ctions of 
+the weight vectors (1,-1) and (-1,1).
+/uni25CFThe output node is used to combine the outputs of the two hidde n 
+nodes.
+ Input nodes  Hidden layer  Output layer  Output               H
+1        –0.5  
+  X1   1    
+      –1          1                  Y  
+                      –1    H
+2    
+  X2   1                             1 
+         
+
+Inputs Output of Hidden Nodes  Output 
+Node X1 XOR   X2 
+X1 X2 H1 H2 
+0 0 0 0 –0.5 /barb2right 0 0 
+0 1 –1 /barb2right 0 1 0.5  /barb2right 1 1 
+1 0 1 –1 /barb2right 0 0.5  /barb2right 1 1 
+1 1 0 0 –0.5 /barb2right 0 0 
+ Since we are representing two states by 0 (false) and 1 (true), we will map negative outputs (–1, –0.5) of hidden and output layers to 0 and positive output (0.5) to 1. 
+
+1
+2
++1+1 
+3
+
+xnx1
+x2
+Input Output Three-layer networks 
+Hidden layers 
+
+What do each of the layers do? 
+1st layer draws linear boundaries 2nd layer combines the boundaries 3rd layer can generate 
+arbitrarily complex boundaries 
+
+Properties of architecture • No connections within a layer 
+y f w x bi i j j i
+jm
+= +∑
+=( )
+1Each unit is a perceptron 
+
+Properties of architecture • No connections within a layer • No direct connections between input and output layers •
+y f w x bi i j j i
+jm
+= +∑
+=( )
+1Each unit is a perceptron 
+
+Properties of architecture • No connections within a layer • No direct connections between input and output layers • Fully connected between layers •
+y f w x bi i j j i
+jm
+= +∑
+=( )
+1Each unit is a perceptron 
+39 
+
+Properties of architecture • No connections within a layer • No direct connections between input and output layers • Fully connected between layers • Often more than 3 layers • Number of output units need not equal number of input units • Number of hidden units per layer can be more or less than 
+input or output units 
+y f w x bi i j j i
+jm
+= +∑
+=( )
+1Each unit is a perceptron 
+Often include bias as an extra weight 
+
+Backward pass phase:  computes ‘error signal’, propagates 
+the error backwards through network starting at output units 
+(where the error is the difference between actual and desired output values) Forward pass phase: computes ‘functional signal’, feed forward propagation of input pattern signals through network Backpropagation learning algorithm ‘BP’ Solution to credit assignment problem in MLP. Rumelhart, Hinton and 
+Williams (1986) ( though actually invented earlier in a PhD thesis 
+relating to economics) BP has two phases :
+
+Conceptually: Forward Activity -
+Backward Error 
+42 
+
+Forward Propagation of Activity 
+•Step 1: Initialize weights at random, choose a learning rate η 
+•Until network is trained: 
+•For each training example i.e. input pattern and target output(s): 
+•Step 2: Do forward pass through net (with fixed weights) to produce output(s) 
+–i.e., in Forward Direction, layer by layer: 
+•Inputs applied 
+•Multiplied by weights 
+•Summed 
+•‘Squashed’ by sigmoid activation function 
+•Output passed to each neuron in next layer 
+–Repeat above until network output(s) produced 
+
+Step 3. Back-propagation of error 
+• Compute error (delta or local gradient) for each output unit δ k 
+ 
+• Layer-by-layer, compute error (delta or local gradient) for each hidden unit δ j  by backpropagating 
+ 
+errors  
+ Step 4: Next, update all the weights 
+∆wij  
+By gradient descent, and go back to Step 2 
+− The overall MLP learning algorithm, involving 
+forward pass and backpropagation of error (until the network training completion), is known as the Generalised Delta 
+Rule (GDR), 
+or more commonly, the Back Propagation (BP) algorithm 
+
+Learning Algorithm: 
+Backpropagation 
+The following slides describes teaching process of multi-layer neural network 
+employing backpropagation algorithm. To illustrate this process the three lay er neural 
+network with two inputs and one output,which is sho wn in the picture below, is used: 
+
+Learning Algorithm: 
+Backpropagation 
+Each neuron is composed of two units. First unit ad ds products of weights coefficients and 
+input signals. The second unit realise nonlinear fu nction, called neuron transfer (activation)
+function. Signal eis adder output signal, and y = f(e) is output signal of nonlinear element. 
+Signal yis also output signal of neuron. 
+
+Learning Algorithm: 
+Backpropagation 
+Pictures below illustrate how signal is propagating  through the network, 
+Symbols w(xm)n represent weights of connections between network in put xmand 
+neuron nin input layer. Symbols ynrepresents output signal of neuron n.
+
+Learning Algorithm: 
+Backpropagation 
+
+Learning Algorithm: 
+Backpropagation 
+
+Learning Algorithm: 
+Backpropagation 
+Propagation of signals through the hidden layer. Sy mbols wmn represent weights 
+of connections between output of neuron mand input of neuron nin the next 
+layer. 
+
+Learning Algorithm: 
+Backpropagation 
+
+Learning Algorithm: 
+Backpropagation 
+
+Learning Algorithm: 
+Backpropagation 
+Propagation of signals through the output layer. 
+
+Learning Algorithm: 
+Backpropagation 
+In the next algorithm step the output signal of the  network yis 
+compared with the desired output value (the target) , which is found in 
+training data set. The difference is called error s ignal dof output layer 
+neuron 
+
+Learning Algorithm: 
+Backpropagation 
+The idea is to propagate error signal d(computed in single teaching step) 
+back to all neurons, which output signals were inpu t for discussed 
+neuron. 
+
+Learning Algorithm: 
+Backpropagation 
+The idea is to propagate error signal d(computed in single teaching step) 
+back to all neurons, which output signals were inpu t for discussed 
+neuron. 
+
+Learning Algorithm: 
+Backpropagation 
+The weights' coefficients wmn used to propagate errors back are equal to 
+this used during computing output value. Only the d irection of data flow 
+is changed (signals are propagated from output to i nputs one after the 
+other). This technique is used for all network laye rs. If propagated errors 
+came from few neurons they are added. The illustrat ion is below: 
+
+Learning Algorithm: 
+Backpropagation 
+When the error signal for each neuron is computed, the weights 
+coefficients of each neuron input node may be modif ied. In formulas 
+below df(e)/de represents derivative of neuron activation function  
+(which weights are modified). 
+
+Learning Algorithm: 
+Backpropagation 
+When the error signal for each neuron is computed, the weights 
+coefficients of each neuron input node may be modif ied. In formulas 
+below df(e)/de represents derivative of neuron activation function  
+(which weights are modified). 
+
+Learning Algorithm: 
+Backpropagation 
+When the error signal for each neuron is computed, the weights 
+coefficients of each neuron input node may be modif ied. In formulas 
+below df(e)/de represents derivative of neuron activation function  
+(which weights are modified). 
+
+MLP/BP: A worked example 
+
+Worked example: Forward Pass 
+
+Worked example: Forward Pass 
+
+Worked example: Backward Pass 
+
+Worked example: Update Weights 
+Using Generalized Delta Rule (BP) 
+
+Similarly for the all weights wij: 
+
+Verification that it works 
+
+Training 
+• This was a single iteration of back-prop • Training requires many iterations with many 
+training examples or epochs (one epoch is entire 
+presentation of complete training set) 
+• It can be slow ! • Note that computation in MLP is local (with 
+respect to each neuron) 
+• Parallel computation implementation is also 
+possible 
+
+Training and testing data 
+• How many examples ? 
+– The more the merrier ! 
+• Disjoint training and testing data sets 
+– learn from training data but evaluate 
+performance (generalization ability) on unseen test data 
+•Aim : minimize error on test data 
+
+Outline 
+•Background 
+•Supervised learning (BPNN) 
+•Unsupervised learning (SOM) 
+•Implementation in Matlab 
+
+Unsupervised Learning – Self Organizing 
+Maps 
+•Self-organizing maps (SOMs) are a data visualizatio n 
+technique invented by Professor Teuvo Kohonen 
+–Also called Kohonen Networks, Competitive Learning,  
+Winner-Take-All Learning 
+–Generally reduces the dimensions of data through th e use 
+of self-organizing neural networks 
+–Useful for data visualization; humans cannot visual ize high 
+dimensional data so this is often a useful techniqu e to 
+make sense of large data sets 
+
+Basic “Winner Take All” Network 
+•Two layer network 
+–Input units, output units, each input unit is conne cted to each 
+output unit 
+I1
+I2O1 
+O2 Input Layer 
+Wi,j I3Output Layer 
+
+Typical Usage: 2D Feature Map 
+•In typical usage the output nodes form a 2D “map” o rganized 
+in a grid-like fashion and we update weights in a neighborhood around the winner 
+I1
+I2 Input Layer 
+I3Output Layers 
+O11 O12 O13 O14 O15 
+O21 O22 O23 O24 O25 
+O31 O32 O33 O34 O35 
+O41 O42 O43 O44 O45 
+O51 O52 O53 O54 O55 …
+
+Basic Algorithm 
+–Initialize Map (randomly assign weights) 
+–Loop over training examples 
+•Assign input unit values according to the values in  the current 
+example 
+•Find the “winner”, i.e. the output unit that most c losely 
+matches the input units, using some distance metric , e.g. 
+•Modify weights on the winner to more closely match the 
+input ( )2
+1∑
+=−n
+ii ij I WFor all output units j=1 to m and input units i=1 to n Find the one that minimizes: 
+) (1 t t
+itW Xc W − = ∆+
+where c is a small positive learning constant that usually decreases as the learning proceeds 
+
+Result of Algorithm 
+•Initially, some output nodes will randomly be a lit tle 
+closer to some particular type of input 
+•These nodes become “winners” and the weights move them even closer to the inputs 
+•Over time nodes in the output become representative prototypes for examples in the input
+•Note there is no supervised training here 
+•Classification: 
+–Given new input, the class is the output node that is the 
+winner 
+
+Modified Algorithm 
+–Initialize Map (randomly assign weights) 
+–Loop over training examples 
+•Assign input unit values according to the values in  the current 
+example 
+•Find the “winner”, i.e. the output unit that most c losely matches 
+the input units, using some distance metric, e.g. 
+•Modify weights on the winner to more closely match the input 
+•Modify weights in a neighborhood around the winner so the 
+neighbors on the 2D map also become closer to the i nput 
+–Over time this will tend to cluster similar items c loser on the map 
+
+Updating the Neighborhood 
+•Node O 44 is the winner 
+–Color indicates scaling to update neighbors 
+Output Layers 
+O11 O12 O13 O14 O15 
+O21 O22 O23 O24 O25 
+O31 O32 O33 O34 O35 
+O41 O42 O43 O44 O45 
+O51 O52 O53 O54 O55 ) (1 t t
+itW Xc W − = ∆+
+c=1
+c=0.75 c=0.5 Consider if O 42 is 
+winner for some other input; “fight” over claiming O 43 ,
+O33 , O 53 
+
+Selecting the Neighborhood 
+•Typically, a “Sombrero Function” or Gaussian function is used 
+•Neighborhood size usually decreases over time to allow initial “jockeying for position” and then “fi ne-
+tuning” as algorithm proceeds 
+
+Outline 
+•Background 
+•Supervised learning (BPNN) 
+•Unsupervised learning (SOM) 
+•Implementation in Matlab 
+
+Implementation 
+1. Loading data source. 2. Selecting attributes required. 3. Decide training, validation, and testing data. 4. Data manipulations and Target generation. 
+(for supervised learning) 
+5. Neural Network creation (selection of network 
+architecture) and initialisation. 
+6. Network Training and Testing. 7. Performance evaluation. 
+
+Loading and Saving data 
+•load : retrieve data from disk. 
+–In ascii or .mat format. 
+>> data = load (‘nndata.txt’); 
+>> whos data; 
+Name       Size         Bytes  Class data     826x7          46256  double array 
+• Save: saves variables in matlab environment in .mat 
+format. 
+>> save nnoutput.txt x, y ,z; 
+
+Matrix manipulation 
+•region = data(:,1); 
+•training = data([1:500],:) 
+•w=[1;2]; w*w’ => [1,2;2,4]; 
+•w=[1,2;2,4]; w .*w => [1,4;4,16]; 1 22 4
+1 44 16 
+
+Plotting Data 
+Redefine x axis: >> x = [2 4 6 8]; >> plot(x,power(y,2)); • plot : plot the vector in 2D or 3D
+>> y = [1 2 3 4]; figure(1); plot(power(y,2)); 
+
+•PR  - Rx2 matrix of min and max values for R input elements. 
+•Si  - Size of ith layer, for Nl layers. 
+•TFi - Transfer function of ith layer, default = 'tansig'. 
+•BTF - Backprop network training function, 
+•default = 'trainlm'. 
+•BLF - Backprop weight/bias learning function, 
+•default = 'learngdm'. 
+•PF  - Performance function, 
+•default = 'mse’ 
+•newff : create and returns “net” = a feed-forward b ackpropagation network. Network creation 
+>>net = newff(PR,[S1 S2...SNl],{TF1 TF2...TFNl},BTF,BLF,PF) 
+
+Network creation (cont.) 
+Number of inputs 
+decided by PR S1: number 
+hidden neurons S2: number of 
+ouput neuron 
+
+Network Initialisation 
+>> PR = [-1 1; -1 1; -1 1; -1 1]; -1     1 -1     1 -1     1 -1     1 
+Min Max neuron 1 
+•Initialise the net’s weighting and biases 
+•>> net = init (net); % init is called after newff 
+•re-initialise with other function: 
+–net.layers{1}.initFcn = 'initwb'; 
+–net.inputWeights{1,1}.initFcn = 'rands'; 
+–net.biases{1,1}.initFcn = 'rands'; 
+–net.biases{2,1}.initFcn = 'rands'; 
+
+Neurons activation 
+>> net = newff ([-1 1; -1 1; -1 1; -1 1], [4,1], {‘logsig’ ‘logsig’} ); 
+TF1: logsig TF2: logsig 
+
+Network Training 
+•The overall architecture of your neural network is store in 
+the variable net ;
+•variable can be reset. 
+net.trainParam.epochs =1000; (Max no. of epochs to t rain) [100] 
+net.trainParam.goal =0.01; (stop training if the err or goal hit) [0] 
+net.trainParam.lr =0.001; (learning rate, not defaul t trainlm) [0.01] 
+net.trainParam.show =1; (no. epochs between showing error) [25] 
+net.trainParam.time =1000; (Max time to train in sec ) [inf] 
+
+net.trainParam parameters: 
+• epochs: 100 
+• goal: 0 • max_fail: 5 • mem_reduc: 1 • min_grad: 1.0000e-010 • mu: 0.0010 • mu_dec: 0.1000 • mu_inc: 10 • mu_max: 1.0000e+010 • show: 25 • time: Inf 
+
+net.trainFcn options 
+• net.trainFcn=trainlm ; a variant of BP based on second 
+order algorithm ( Levenberg-Marquardt) 
+
+Network Training(cont.) 
+>> TRAIN(NET,P ,T,Pi,Ai) 
+•NET - Network. 
+•P   - Network inputs. 
+•T   - Network targets, default = zeros. 
+•Pi  - Initial input delay conditions, default = zero s. 
+•Ai  - Initial layer delay conditions, default = zero s. 
+>> p = [-0.5 1 -0.5 1; -1 0.5 -1 0.5; 0.5 1 0.5 1; -0. 5 -1 -0.5 -1]; 
+-0.5    1      -0.5    1 -1       0.5   -1       0.5 0.5     1       0.5     1 -0.5   -1     -0.5     -1
+Training 
+pattern 1For 
+neuron 1 TRAIN trains a network NET according to NET.trainFc n and  NET.trainParam. 
+
+Network Training(cont.) 
+>>TRAIN(NET,P ,T,Pi,Ai) • NET - Network. 
+• P   - Network inputs. 
+• T   - Network targets, default = zeros. (optional on ly for  NN with targets) 
+• Pi  - Initial input delay conditions, default = zero s. 
+• Ai  - Initial layer delay conditions, default = zero s. 
+>> p = [-0.5 1 -0.5 1; -1 0.5 -1 0.5; 0.5 1 0.5 1; -0.5 -1 -0.5 -1]; 
+>> net = train(net, p, t); >> t = [-1 1 -1 1]; 
+-1     1    -1     1 
+Training 
+pattern 1 
+
+Simulation of the network 
+>> [Y] = SIM(model, UT) •Y             : Returned output in matrix or struct ure format. 
+•model      : Name of a block diagram model. 
+•UT           : For table inputs, the input to the m odel is interpolated. 
+>> UT = [-0.5 1 ; -0.25 1; -1 0.25 ; -1 0.5]; 
+-0.5 1.00 -0.25 1.00 -1.00      0.25 -1.00      0.50 
+Training 
+pattern 1 For 
+neuron 1>> Y = sim(net,UT); 
+
+Performance Evaluation 
+•Comparison between target and network’s output in testing set. 
+•Comparison between target and network’s output in training set. 
+•Design a metric to measure the distance/similarity of the target and output, or simply use mse. 
+
+NEWSOM 
+•Create a self-organizing map. 
+>> net = newsom (PR,[d1,d2,...],tfcn,dfcn,olr,osteps,tlr,tns) 
+•PR     - Rx2 matrix of min and max values for R inpu t elements. 
+•Di     - Size of ith layer dimension, defaults = [5 8]. 
+•TFCN   - Topology function, default = 'hextop'. 
+•DFCN   - Distance function, default = 'linkdist'. 
+•OLR    - Ordering phase learning rate, default = 0.9 . 
+•OSTEPS - Ordering phase steps, default = 1000. 
+•TLR    - Tuning phase learning rate, default = 0.02;
+•TND    - Tuning phase neighborhood distance, default  = 1. 
+
+NewSom parameters 
+•The topology function TFCN can be HEXTOP , GRIDTOP , or 
+RANDTOP . 
+•The distance function can be LINKDIST, DIST, or MAND IST. 
+•Exmple: 
+>> P = [rand(1,400)*2; rand(1,400)]; 
+>> net = newsom([0 2; 0 1],[3 5]); >> plotsom(net.layers{1}.positions) 
+TRAINWB1 By-weight-&-bias 1-vector-at-a-time training function >> [net,tr] = trainwb1(net,Pd,Tl,Ai,Q,TS,VV ,TV) 
+
+Outline 
+•Background 
+•Supervised learning (BPNN) 
+•Unsupervised learning (SOM) 
+•Implementation in Matlab 
+•Applications 
+

@@ -1,0 +1,323 @@
+Deep Learning - 
+Framework
+
+Page | 2Chapters
+01What is deep learning?
+02Deep learning vs.machine 
+learning
+03Application areas of deep learning 
+04Computer vision in deep learning 
+06Cognitive computing in deep learning
+07Multi touch attribution in deep learning
+08Collaborative filtering in deep learning 
+09Guide to deployment of models
+05Language processing in deep learning
+
+What is Deep Learning? 
+Page | 4Deep Learning is a subset of machine 
+learning in artificial intelligence (AI) 
+Deep learning - also called as deep neural learning or deep neural network, has networks capable of learning 
+that can be supervised, semi-supervised and unsupervised from data that is unstructured or unlabelled. 
+These algorithms use multiple layers to progressively extract higher level features from raw input
+An artificial neuron network (ANN): It is a computational model based on the structure and functions of biological neural networks
+What is Neural 
+Network?ANNs are considered nonlinear statistical data modeling tools where the complex relationships between inputs and outputs are modeled or patterns are found
+More efficient and accurate than other traditional algorithms techniquesANN can be used for both - Supervised and Unsupervised learning
+Why Neural 
+Network?It can be used for both Unstructured and Structured data Works with more accuracy and efficiency for unstructured data
+Where Neural 
+Networks are used?Used in pattern recognition because of their ability to generalise and to respond to unexpected inputs/patternsProblems for which algorithmic method is expensive or does not existNeural networks can learn by example, hence we do not need to program it, to that extent
+Requires additional devices for processing supportNeural Network is still a black box model - it is hard to look "into" the network and figure out exactly what it has learntComputation time is more
+Challenges 
+Deep Learning vs. Machine Learning
+Overview
+Page | 6Deep Learning
+A subfield of Machine Learning that is 
+concerned with algorithms called artificial 
+neural networks, which are inspired by the 
+structure and function of brain Artificial Intelligence
+Developing systems which have the ability to
+learn and reason like humans
+Science of making intelligent machines that can 
+perform tasks like or even better and faster then
+humans can
+Machine Learning
+Machine Learning is the study of algorithms that 
+Improves their performance P
+At some task T
+with experience E
+Customer Segmentation
+ Optimization 
+Handwriting Recognition
+HOMEPOD
+Page | 7Types of Machine Learning
+Supervised 
+Learning
+Makes machine learn explicitly
+Data with clearly defined  output 
+is given
+Predicts outcome/future
+Resolves classification &  
+regression problems
+Training
+Outputs InputsUnsupervised 
+Learning
+Machine understands the  data 
+(identifies patterns/structures)
+Evaluation is qualitative or  
+indirect
+Does not predict/find anything 
+specific
+Outputs InputsReinforcement 
+Learning
+An approach to AI
+Reward based learning
+Learning from +ve& -ve
+reinforcement
+Machine learns how to act  in a 
+certain environment
+To maximize rewards
+Rewards
+Outputs Inputs
+Application Areas of Deep Learning 
+Page | 9Key areas where Neural Networks plays a 
+significant role
+Text analytics refers to a discipline of computer science that combines machine learning and natural language processing (NLP) to draw meaning from unstructured text documents.Language Processing
+“Multi-touch attribution” refers to the martech attribution solution that tracks a series of touchpoints through the funnel and assigns revenue credits to those touchpoints.Multi Channel Attribution
+Computer vision is concerned with the theory and technology for building artificial systems that obtain information from images or multi-dimensional data.Computer Vision
+Video Analytics uses mathe -
+matical algorithms to monitor, analyze and manage large volumes of video. It digitally analyzes video inputs; transforming them into intelligent data which helps in taking decisions.Video Analytics
+Cognitive computing process uses a blend of artificial intelligence, neural networks, machine learning, natural language processing, sentiment analysis and contextual awareness to solve day-to-day problems just like humans.Cognitive Computing
+Collaborative filtering is a method of making automatic predictions (filtering) about the interests of a user by collecting preferences or taste 
+information from many users  
+(collaborating).Collaborative Filtering
+Computer Vision in Deep Learning 
+Page | 11Introduction to Computer Vision
+Computer Vision seeks to develop techniques to help 
+computers “see” and understand the content of digital images such as photographs and videos.
+Computer vision works
+in three basic steps:
+Acquiring an image 
+Images, even large sets, can be acquired in real-time through video, photos or 3D technology for analysis. 
+Processing the image 
+Deep learning models automate much of this process, but the models are often trained by first being fed thousands of labeled or pre-identified images.
+Understanding the image 
+The final step is the interpretative step, where an object is identified or classified. 
+Page | 12Popular Models for Computer Vision
+Computer VisionObject Classification
+Object Detection
+Image Generation
+Object Recognition
+Instance SegmentationCNN
+Capsule Neural Network
+R-CNN
+YOLO
+R-FCN
+GAN
+AutoEncoders
+Siamese Neural Network
+SVM 
+Masked R-CNN
+Language Processing in Deep Learning
+Page | 14Introduction to Language Processing
+Natural Language Processing (NLP) is a branch of AI “that deals with human-computer interaction through natural (human) 
+languages”. NLP trains computers to understand, decipher and manipulate human languages: spoken and written
+Natural Language Understanding:
+Involves interpretation of language. Examples: HomePod, Alexa and Google AssistantNatural Language Generation: Involves producing meaningful language as output. Examples: Automatic captions in YouTube, chatbots, automated journalism (Associated Press)
+Ambiguity in spoken/written language 
+is the main challenge in NLP
+Meaning of words change depending on the context
+Meaning based on punctuation
+Detecting attitude/intention: anger, sadness, sarcasm, irony Homepod
+Spam classificationHandwriting Recognition
+
+Page | 15Language Processing consists of 5 major steps
+12345
+Pre-processing 
+text:  
+clean text, remove special characters and stop-wordsFind words that frequently occur togetherN-grams: Examine text to understand opin -
+ions(positive, negative or neutral) expressed within text Sentiment analysis: Identify main themes discussed within the textTopic Modeling:Take business decisions based on output from sentiment analysis and topic modelingEvaluating results:
+Page | 16Language processing: Statistical vs. Neural Models
+Language ProcessingStatistical
+Neural ModelsN-Grams
+Bag of word
+LSTM
+BERT
+XLNetAdvantages of Neural Model over 
+traditional statistical models
+Contextual Information is captured 
+Machine learning models are designed 
+to make the most accurate predictions possible. Statistical models are designed for inference about the relationships between variables
+Deep Learning does much better than 
+statistical methods on unstructured data (video, sound, text, pictures)
+Cognitive Computing
+Page | 18Introduction to Cognitive Computing
+Cognitive computing is the use of computerized models to simulate the human thought process in complex situations where the 
+answers may be ambiguous and uncertain. The phrase is closely associated with IBM's cognitive computer system, Watson.
+Based on the scientific disciplines of artificial intelligence and signal processingPlatform uses machine learning, reasoning, natural language processing, speech recognition and vision, human computer interaction, dialog and narrative generation, among other technologies
+Cognitive computing improve human decision-making
+Meal 
+PlanningMore accurate models of how the human brain/mind senses, reasons, and responds to stimulus 
+Cognitive computinga applications adjust content for a particular type of audienceCognitive computing applications are more affective and more influential by design01
+03
+0502
+04
+06Key Attributes of Cognitive System
+Adaptive 
+systems 
+which learn as 
+information 
+changes, and 
+as goals and 
+requirements 
+evolveSystems 
+which interact 
+with other 
+processors, 
+devices, cloud 
+services, as 
+well as with 
+peopleIterative 
+process to 
+solve 
+problems 
+which are 
+ambiguousprovides 
+information 
+that is suitable 
+for the specific 
+application at 
+that point of 
+timeUnderstand, 
+identify, and 
+extract 
+contextual 
+elementsAdaptive Interactive Iterative Stateful Contextual
+Page | 1905Cognitive Computing mimic’s human brain’s 
+reasoning process
+COGNITIVE COMPUTING 
+Machine learning, natural language processing, 
+neural networks, deep learning, sentiment analysis TechnologyMachine learning, natural language processing, 
+neural networks, deep learning 
+CapabilitiesSimulate human thought processes to assist 
+humans in finding solutions to complex problems Find patterns in big data to learn and either reveal 
+hidden information or deliver solutions to complex 
+problems 
+Purpose Augment human capabilities Automate processes 
+Industries Customer service, healthcare, industrial sector Finance, security. healthcare, retail, 
+manufacturing, government ARTIFICIAL INTELLIGENCE 
+
+Multi Touch Attribution 
+Page | 21Introduction to Multi Channel Attribution
+Multi-channel attribution is a set of rules that assigns credit for sales and revenue to touch points across the customer journey.The 
+purpose of attribution is to help marketers understand what marketing actions and touchpoints influence revenue and conversions. 
+Attribution models
+Last touch First touch Time decay Linear Position based
+Examples
+Paid search
+Website
+Trade 
+showDemos
+Dialogue with sales
+Last interaction Assist
+B2B buyer’s pathReferal/white 
+paperSocialEmail/webinar
+Awareness Consideration Intent DecisionDisplay Social Paid search
+Customer journey
+Credit allocationConversion
+Page | 22Introduction to Multi Channel Attribution
+First Touch Growth
+EfficiencyU-shaped
+(position
+based)
+Linear
+Time decay
+Last clickPROS
+Maximize TOFU credit 
+distribution. Favors 
+customer acquisition 
+Emphasizes key touches 
+while giving some credit 
+to early efforts
+Every touch point is 
+considered
+High efficiency while 
+distributing some 
+credit to TOFU 
+Maximize efficiency HOW IT WORKS
+Assigns 100% of credit to 
+first AdWords touch point 
+Assigns 40% of credit to first  
++ last touch point. Distributes   
+remaining 20% evenly 
+Every touch point is 
+assigned equal credit
+Bulk of credit assigned to 
+last touch, diminishing 
+value assigned to earlier 
+points
+The worst Jerry,
+the worstCONS
+Favors highly competitive 
+terms — likely to be 
+inefficient 
+Can undervalue middle 
+touch points, especially 
+for long purchase cycle 
+Undervalues key touch 
+points, over values minor 
+touch points 
+Overvalues last touch efforts 
+(brand, remarketing) 
+Significantly overvalues 
+brand terms, remarketing. 
+Favors customer recycling 
+Collaborative Filtering
+Page | 24Introduction to Collaborative Filtering
+Collaborative filtering is a technique of recommendation engine that can filter out items that a user 
+might like on the basis of reactions by similar users.
+Collaborative 
+Filtering
+User-basedRead by 
+both users
+Read by her,
+recommended to him!Similiar users
+Item-based filtering
+
+Guide to deployment of models
+Page | 26Ingest data Prepare Preprocess Discover Develop Train  Test & Analyze Deploy 
+Transfer
+Services GCP  
+services 
+Workbench 
+Repository  
+(notebooks, 
+modules, 
+pipelines) ML 
+activity 
+Cloud 
+Dataproc Al Hub Deep Learning 
+VM Image TFX tools Cloud 
+Dataflow  Data labeling 
+service 
+Cloud 
+Storage Al Platform 
+Training 
+Kubeflow 
+(on-premises) Al Platform 
+Prediction 
+Kubeflow 
+(on-premises) Cloud 
+Dataflow 
+Cloud 
+Dataproc Cloud 
+Dataprep 
+Big QueryBig QueryAl Platform 
+Notebooks 
+Al Hub
+Al Platform  
+ On-premises:Kubeflow pipelinesMachine learning development: the end-to-end cycle
+For more information visit:  latentview.com
+For any other queries, please reach out to 
+marketing@latentview.com
+

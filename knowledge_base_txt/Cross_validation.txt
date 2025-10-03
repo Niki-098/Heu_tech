@@ -1,0 +1,66 @@
+CME 250: Introduction to Machine Learning, Winter 2019CME 250: Introduction to Machine LearningLecture 4: Cross-validation and ImputationSherrie Wang sherwang@stanford.edu
+1
+CME 250: Introduction to Machine Learning, Winter 2019Homework 1 Feedback
+2
+
+CME 250: Introduction to Machine Learning, Winter 2019Agenda•  Cross-validation•  Missing data-  Missing completely at random (MCAR) -  Imputation methods
+3Slides are online at cme250.stanford.edu
+CME 250: Introduction to Machine Learning, Winter 2019Cross-Validation 
+4
+CME 250: Introduction to Machine Learning, Winter 2019Recall the Validation & Test SetsGoals:•  Pick the best model •  Estimate the average error on new, unseen data To do this, we hold out a part of the dataset and apply the trained model to these held out samples.
+5
+FIGURE 5.1, ISL (8th printing 2017)Training setValidation set
+CME 250: Introduction to Machine Learning, Winter 2019Problems:•  Estimate of average error on unseen data can vary a lot, depending on which observations are in training, validation, and test sets. •  Only a subset of dataset is used to train the model. Since statistical methods tend to perform worse when trained on fewer observations, validation and test set errors may overestimate expected error on new data for a model ﬁt on the entire dataset.6Problems with 1 Dataset Split
+CME 250: Introduction to Machine Learning, Winter 2019Problems with 1 Dataset Split
+7FIGURE 5.2, ISL (8th printing 2017)
+One train/validation splitTen train/validation splits
+CME 250: Introduction to Machine Learning, Winter 2019Step 1.A single observation is used for the validation set; the remaining n-1 observations make up the training set.
+8Leave-One-Out Cross-ValidationStep 2.Model is ﬁt on n-1 training observations.Step 3.The error on the held-out observation               is an unbiased estimate for the error on new data. E.g.
+
+CME 250: Introduction to Machine Learning, Winter 2019The error estimated from a single observation will be highly variable, making it a poor estimate of test error. So… we can repeat the leave-one-out procedure by selecting every observation as the validation set, and training on the remaining n-1 observations. This produces n error estimates, one from each held-out observation. LOOCV estimate for test MSE:9Leave-One-Out Cross-Validation
+
+CME 250: Introduction to Machine Learning, Winter 201910Leave-One-Out Cross-Validation
+FIGURE 5.3, ISL (8th printing 2017)
+CME 250: Introduction to Machine Learning, Winter 2019Pros:•  Less bias; less overestimation of test error since n-1 is close to n •  Every LOOCV on a dataset will yield same results; no variation from exact training / validation split Cons:•  Can be computationally expensive to implement11Leave-One-Out Cross-Validation
+CME 250: Introduction to Machine Learning, Winter 2019Step 1.Randomly divide the dataset into k groups, aka “folds”. First fold is validation set; remaining k-1 folds are training.
+12k-Fold Cross-ValidationStep 2.Model is ﬁt on k-1 folds of training observations.Step 3.The error on the held-out fold is an unbiased estimate for the error on new data. E.g.
+
+CME 250: Introduction to Machine Learning, Winter 2019Like in LOOCV, repeat this for each of the k folds. This produces k error estimates, one from each held-out fold. k-fold estimate for test MSE: LOOCV is a special case of k-fold CV with k = n. In practice, usually set k = 5 or k = 10.13k-Fold Cross-Validation
+
+CME 250: Introduction to Machine Learning, Winter 201914k-Fold Cross-Validation
+FIGURE 5.5, ISL (8th printing 2017)
+
+CME 250: Introduction to Machine Learning, Winter 2019Pros:•  Since it’s an average over k splits, less variation than one training / validation split •  Computationally more feasible than LOOCV, also less variance Cons:•  Still more biased / more prone to overestimating error than LOOCV since 10-20% data not used for training15k-Fold Cross-Validation
+CME 250: Introduction to Machine Learning, Winter 201916LOOCV vs. k-fold CV
+FIGURE 5.4, ISL (8th printing 2017)
+
+CME 250: Introduction to Machine Learning, Winter 2019Bias: LOOCV gives less biased estimate of generalization error than k-fold CV. Variance: LOOCV has higher variance than k-fold CV. Why? LOOCV averages error from n models, each of which is trained on nearly identical datasets. These errors are highly positively correlated. The variance of the mean of many highly correlated quantities is higher than the variance of the mean of less correlated quantities. In practice, people use k-fold CV with k = 5 or k = 10.17Bias-Variance Tradeoff in CV
+CME 250: Introduction to Machine Learning, Winter 2019If we ﬁt many models to a validation set and select the best one, the error estimate risks becoming an underestimate of true generalization error due to being tuned to the validation set. Option 1: Find best hyperparameters on 1 validation set and apply to 1 test set. Option 2: Find best hyperparameters on k validation folds and apply to 1 test set. 18What about the test set?
+
+CME 250: Introduction to Machine Learning, Winter 2019Option 3: Tune hyperparameters on the validation set in an “inner loop”, estimate generalization error in an “outer loop”. If your models are stable*, each completion of the inner loop should yield similar hyperparameters. *stable = does not change a lot with small perturbations in training data 19Nested Cross-Validation
+https://sebastianraschka.com/faq/docs/evaluate-a-model.html
+CME 250: Introduction to Machine Learning, Winter 2019Cross-validation in Python: sklearnNon-nested 5-fold CV: from sklearn.linear_model import Lasso from sklearn.model_selection import GridSearchCV  lasso = Lasso(random_state=0) alphas = np.logspace(-4, -0.5, 30) params = {‘alpha’: alphas}  gridcv = GridSearchCV(estimator=lasso, param_grid=params, cv=5) gridcv.fit(X, y) scores = gridcv.cv_results_[‘mean_test_score’]20
+CME 250: Introduction to Machine Learning, Winter 2019Cross-validation in Python: sklearnNested 5-fold CV: from sklearn.linear_model import Lasso from sklearn.model_selection import GridSearchCV, cross_val_score, KFold  lasso = Lasso(random_state=0) alphas = np.logspace(-4, -0.5, 30) params = {‘alpha’: alphas}  inner_cv = KFold(n_splits=5, shuffle=True, random_state=0) outer_cv = KFold(n_splits=5, shuffle=True, random_state=0)   gridcv = GridSearchCV(estimator=lasso, param_grid=params, cv=inner_cv) nested_score = cross_val_score(estimator=gridcv, X=X, y=y, cv=outer_cv) scores = clf.cv_results_[‘mean_test_score’]21Good explanation: https://stackoverﬂow.com/questions/42228735/scikit-learn-gridsearchcv-with-multiple-repetitions/42230764#42230764
+CME 250: Introduction to Machine Learning, Winter 2019Cross-validation in R: caretrequire(caret)train_set <- createDataPartition(y, p=0.8)cv_splits <- createFolds(y, k = 5, returnTrain=TRUE)  params <- expand.grid(alpha = c(0, 0.1, 0.2, 0.5)) ctrl <- trainControl(method = “cv”, number = 5) fit <- train(response ~ ., data = df,               method = “glmnet”, tuneGrid = params,              trControl = ctrl)22http://www.milanor.net/blog/cross-validation-for-predictive-analytics-using-r/ 
+CME 250: Introduction to Machine Learning, Winter 2019Cross-validation in MatlabUseful functions: •  vals = crossval(fun, X)• c = cvpartition(n, ‘KFold’, k)• [X,Y] = meshgrid(x,y)
+23
+CME 250: Introduction to Machine Learning, Winter 2019Missing Data 
+24
+CME 250: Introduction to Machine Learning, Winter 2019Occurs when no value is stored for a feature or response variable at a particular sample. Very common in reality. Can arise from non-response, study participant attrition, data logging mistakes.
+25Missing Data
+
+CME 250: Introduction to Machine Learning, Winter 2019A few options: •  Imputation •  Deletion •  Use methods unaffected by missing values
+26How to handle missing data?
+CME 250: Introduction to Machine Learning, Winter 2019A fundamental assumption for imputation or deletion. If not MCAR, imputation or deletion will bias the data. One way to test this assumption: code missing data as “missing” and non-missing data as “not”, and then run classiﬁcation with missingness as the response. If not MCAR, a supervised learning method may ﬁnd a pattern to the missingness.
+27Missing Completely at Random (MCAR)?
+CME 250: Introduction to Machine Learning, Winter 2019The process of replacing missing data with substituted values. Why? Most machine learning methods in their vanilla form cannot handle samples with one or more features missing.
+28Imputation
+
+CME 250: Introduction to Machine Learning, Winter 2019Compute the overall mean for that feature and ﬁll in missing value with that value. Can also use median or mode. Pros: Fast to compute, does not change feature mean Cons: Reduces variance in dataset
+29Mean Imputation
+CME 250: Introduction to Machine Learning, Winter 20191.  Fill in missing values using the mean or median for that variable. 2.  Compute the distance between observation missing a value and all other observations to ﬁnd the k nearest neighbors. Ignore the variable that is missing the value when computing the distance. 3.  Fill in missing values with the mean or median of that variable of the k nearest neighbors.
+30KNN Imputation
+CME 250: Introduction to Machine Learning, Winter 2019Regress the missing variable on other variables. The imputed value is the predicted value for the missing variable. Can use any regression (or classiﬁcation if categorical) method. In practice CART works well.
+31Regression Imputation
+CME 250: Introduction to Machine Learning, Winter 201932Summary
+

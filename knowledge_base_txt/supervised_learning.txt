@@ -1,0 +1,171 @@
+9/8/2018
+1SUPERVISED LEARNING
+(SESSION-2018-19)(Regression & Classification)
+OVERVIEW OF MACHINE LEARNING
+Machine Learning is the process of creating models that can perform a certain task 
+without the need for a human explicitly programming it to do something.
+
+9/8/2018
+2WHAT IS SUPERVISED LEARNING?
+Dogs and cats both have 4 legs and a tail.
+Dogs come in small to large sizes. Cats, on 
+the other hand, are always small.
+Dogs have a long mouth while cats have 
+smaller mouths.
+Dogs bark while cats meow.
+Different dogs have different ears while 
+cats have almost the same kind of ears.FEATURES
+WHY IS IT IMPORTANT?
+Supervised learning gives the algorithm experience which can be used to
+output the predictions for new unseen data
+Experience also helps in optimizing the performance of the algorithm
+9/8/2018
+3TYPES OF SUPERVISED LEARNING 
+(REGRESSION & CLASSIFICATION)
+Regression: Regression analysis is a form of predictive modelling technique
+which investigates the relationship between a dependent and independent
+variable.
+USES OF REGRESSION 
+Determining the strength of predictors (strength of the effect that the
+independent variable have on the dependent variable)
+Forecasting an effect
+Trend forecasting
+9/8/2018
+4LINEAR VS LOGISTIC REGRESSION
+LINEAR REGRESSION 
+
+9/8/2018
+5LINEAR REGRESSION 
+LINEAR REGRESSION 
+9/8/2018
+6
+LINEAR REGRESSION 
+R-SQUARED VALUE
+R-squared value is a statistical measure of how close the data are to the
+fitted regression line.
+It is also known as coefficient of determination, or the coefficient of multiple
+determination
+9/8/2018
+7GOODNESS OF FIT
+CONT.…
+When the value of R square is equal to 1 then the actual values lies on the regression line.
+9/8/2018
+8MEAN SQUARED ERROR
+GRADIENT DESCENT
+
+9/8/2018
+9EXAMPLE 
+CONT.…
+
+9/8/2018
+10CONT.…
+CONT.….
+For Slope
+9/8/2018
+11CONT.…
+CODE
+
+9/8/2018
+12LOGISTIC REGRESSION
+Logistic Regression produces result in a binary format which is used to predict the
+outcome of a categorical dependent variable. So the outcome should be
+discrete/categoricalsuch as:
+LOGISTIC REGRESSION CURVE 
+
+9/8/2018
+13EXAMPLE 
+CONT.… 
+
+9/8/2018
+14CLASSIFICATION 
+Classification is a process of categorizing a given set of data into classes, It can be
+performedon both structured or unstructured data.
+The process starts with predicting the class of given data points. The classes are often
+referredto as target, label or categories.
+CLASSIFICATION TERMINOLOGIES
+
+9/8/2018
+15TYPES OF LEARNERS IN CLASSIFICATION
+CLASSIFICATION ALGORITHMS
+In machine learning, classification is a supervised learning concept which basically
+categorizes a set of data into classes.
+
+9/8/2018
+16LOGISTIC REGRESSION
+It is a classification algorithm in machine learning that uses one or more independent
+variablesto determine an outcome.
+It will have only two possible outcomes.
+NAIVE BAYES CLASSIFIER
+It is a classification algorithm based on Bayes’s theorem which gives an assumption of
+independence among predictors.
+In simple terms, a Naive Bayes classifier assumes that the presence of a particular
+feature in a class is unrelated to the presence of any other feature.
+
+9/8/2018
+17STOCHASTIC GRADIENT DESCENT
+It is a very effective and simple approachto fit linear models.
+Stochastic Gradient Descent is particularly useful when the sample data is in a large
+number.
+K-NEAREST NEIGHBOR
+It is a lazy learning algorithm that stores all instances corresponding to training data
+in n-dimensional space.
+It is a lazy learning algorithm as it does not focus on constructing a general internal
+model, instead, it works on storing instances of training data.
+9/8/2018
+18DECISION TREE
+The decision tree algorithm builds the classification model in the form of a tree
+structure.
+RANDOM FOREST
+Random decision trees or random forest are an ensemble learning method for
+classification, regression, etc.
+It operates by constructing a multitude of decision trees at training time and outputs
+the class that is the mode of the classes or classification or mean
+prediction(regression)of the individual trees.
+
+9/8/2018
+19ARTIFICIAL NEURAL NETWORKS
+A neural network consists of neurons that are arranged in layers, they take some input
+vector and convert it into an output. The process involves each neuron taking input
+and applying a function which is often a non-linear function to it and then passes the
+output to the next layer.
+SUPPORT VECTOR MACHINE
+The support vector machine is a
+classifier that represents the training
+data as points in space separated
+into categories by a gap as wide as
+possible. New points are then
+added to space by predicting which
+category they fall into and which
+space they will belong to.
+
+9/8/2018
+20CLASSIFIER EVALUATION
+HOLDOUT METHOD
+This is the most common method to evaluate a classifier. In this method, the given data 
+set is divided into two parts as a test and train set 20% and 80% respectively.
+The train set is used to train the data and the unseen test set is used to test its 
+predictive power.
+9/8/2018
+21CROSS-VALIDATION
+Over-fitting is the most common problem prevalent
+in most of the machine learning models. K-fold
+cross-validation can be conducted to verify if the
+model is over-fitted at all.
+In this method, the data set is randomly
+partitioned into k mutually exclusive subsets, each
+of which is of the same size. Out of these, one is
+kept for testing and others are used to train the
+model. The same process takes place for all k
+folds.
+CLASSIFICATION REPORT
+
+9/8/2018
+22ROC CURVE
+Receiver operating characteristics or ROC curve is used for visual comparison of
+classification models, which shows the relationship between the true positive rate and
+the false positive rate. The area under the ROC curve is the measure of the accuracy
+of the model.
+ALGORITHM SELECTION
+
+9/8/2018
+23

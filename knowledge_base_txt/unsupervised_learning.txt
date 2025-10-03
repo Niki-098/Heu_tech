@@ -1,0 +1,1744 @@
+Part II
+Unsupervised Learning
+
+6
+Clustering
+So far, we have considered ML models which require labeled data
+in order to learn. However, there is a large class of models which
+can learn from unlabeled data. From this chapter, we will begin to
+introduce models from this modeling paradigm, called unsupervised
+learning . In this chapter, we focus on one application of unsupervised
+learning, called clustering algorithm .
+6.1Unsupervised Learning
+Unsupervised learning is a branch of machine learning which only uses
+unlabeled data. Examples of unlabeled data include a text corpus
+containing the works of William Shakespeare (Chapter 8) or a set of
+unlabeled images (Chapter 7). Some key goals in this setting include:
+•Learn the structure of data: It is possible to learn if the data consists
+of clusters, or if it can be represented in a lower dimension.
+•Learn the probability distribution of data: By learning the probability
+distribution where the training data came from, it is possible to
+generate synthetic data which is “similar” to real data.
+•Learn a representation for data: We can learn a representation that is
+useful in solving other tasks later. With this new representation,
+for example, we can reduce the need for labeled examples for
+classification.
+6.2Clustering
+Clustering is one of the main tasks in unsupervised learning. It is the
+process of detecting clusters in the dataset. Often the membership
+of a cluster can replace the role of a label in the training dataset. In
+general, clusters reveal a lot of information about the underlying
+structure of the data.
+70 introduction to machine learning lecture notes for cos 324 at princeton university
+Figure 6.1: Height vs weight scatter
+plot of basketball players. In the plot on
+the right, the points in green and blue
+respectively correspond to female and
+male players.
+In Figure 6.1, we see a scatter plot of measurements of height and
+weight of basketball players. If you look at the plot on the left, it is
+easy to conclude that there is a usual linear relationship between the
+height and the weight of the athletes. However, upon further inspec-
+tion, it seems like there are two clusters of the data points, separated
+around the middle of the plot. In fact, this is indeed the case! If we
+label the dataset with the additional information of whether the data
+point is from a male or female athlete, the plot on the right shows
+something more than just the linear relationship. In practice, however,
+we do not always have access to this additional label. Instead, one
+uses clustering algorithms to find natural clusterings of the data. This
+raises the question of what a “clustering” is, in the first place.
+Technically, any partition of the dataset Dinto ksubsets C1,C2, . . . , Ck
+can be called a clustering.1That is,1Here k, the number of clusters may be
+given as part of the problem, or kmay
+have to be decided upon after looking
+at the dataset. We’ll revisit this soon.k[
+i=1Ci=Dandk\
+i=1Ci=∅
+But we intuitively understand that not all partitions are a natural
+clustering of the dataset; our goal therefore will be to define what a
+“good” clustering is.
+6.2.1Some Attempts to Define a “Good” Cluster
+The sample data in Figure 6.1suggests that our vision system has
+evolved to spot natural clusterings in two or three dimensional data.
+To do machine learning, however, we need a more precise definition
+inRd: specifically, for any partition of the dataset into clusters, we try
+to quantify the “goodness” of the clusters.
+Definition 6.2.1(Cluster: Attempt 1).A “good” cluster is a subset of
+points which are closer to each other than to all other points in the dataset.
+But this definition does not apply to the clusters in Figure 6.1. The
+points in the middle of the plot are far away from the points on the
+top right corner or the bottom left corner. So whichever cluster we
+assign the middle points to, they will be farther away from some
+clustering 71
+points in their assigned cluster than to some of the points on the
+other cluster. Ok, so that did not work. Consider the following
+definition.
+Definition 6.2.2(Cluster: Attempt 2).A “good” cluster is a subset of
+points which are closer to the mean of their own cluster than to the mean of
+other clusters.
+Here Mean and Variance are defined as follows:
+Definition 6.2.3(Mean and Variance of Clusters) .LetCibe one of the
+clusters for a dataset D. Let mi=|Ci|denote the cluster size . The mean of
+the cluster C iis
+⃗yi=1
+mi∑
+⃗x∈Ci⃗x
+and the variance within the cluster C iis
+σ2
+i=1
+mi∑
+⃗x∈Ci∥⃗x−⃗yi∥2
+2
+You may notice that Definition 6.2.2appears to be using circular
+reasoning: it defines clusters using the mean of the clusters, but the
+mean can only be calculated once the clusters have been defined.2 2Such circular reasoning occurs in most
+natural formulations of clustering. Look
+at the Wikipedia page on clustering for
+some other formulations. 6.3k-Means Clustering
+In this section, we present a particular partition of the dataset called
+thek-means clustering . Given k, the desired number of clusters, the
+k-means clustering partitions Dinto kclusters C1,C2, . . . , Ckso as to
+minimize the cost function:
+k
+∑
+i=1∑
+⃗x∈Ci∥⃗x−⃗yi∥2
+2(6.1)
+This can be seen as minimizing the average of the individual cost of
+thekclusters, where cost of Ciis∑
+⃗x∈Ci∥⃗x−⃗yi∥2
+2.3This idea is similar3Notice that each cluster cost is the
+cluster size times the variance.
+in spirit to our earlier attempt in Definition 6.2.2— we want the
+distance of each data point to the mean of the cluster to be small. But
+this method is able to circumvent the problem of circular reasoning.
+The process of finding the optimal solution for (6.1)is called the
+k-means clustering problem .
+6.3.1k-Means Algorithm
+Somewhat confusingly, the most famous algorithm that is used
+to solve the k-means clustering problem is also called k-means . It is
+technically a heuristic , meaning it makes intuitive sense but it is not
+72 introduction to machine learning lecture notes for cos 324 at princeton university
+guaranteed to find the optimum solution.4The following is the k-4There is extensive research on finding
+near-optimal solutions to k-means. The
+problem is known to be NP-complete,
+so we believe that an algorithm that is
+guaranteed to produce the optimum
+solution on all instances must require
+exponential time.means algorithm. It is given some initial clustering (we discuss some
+choices for initialization below) and we repeat the following iteration
+until we can no longer improve the cost function:
+Maintain clusters C1,C2, . . . , Ck
+For each cluster Ci, find the mean ⃗yi
+Initialize new clusters C′
+i←∅
+for⃗x∈ D do
+ix=arg min i∥⃗x−⃗yi∥2
+C′
+ix←C′
+ix∪ {⃗x}
+end for
+Update clusters Ci←C′
+i
+At each iteration, we find the mean of each current cluster. Then
+for each data point, we assign it to the cluster whose mean is the
+closest to the point, without updating the mean of the clusters. In
+case there are multiple cluster means that the point is closest to, we
+apply the tie-breaker rule that the point gets assigned to the current
+cluster if it is among the closest ones; otherwise, it will be randomly
+assigned to one of them. Once we have assigned all points to the new
+clusters, we update the current set of clusters, thereby updating the
+mean of the clusters as well. We repeat this process until there is no
+point that is mis-assigned.
+6.3.2Why Does k-Means Algorithm Terminate in Finite time?
+The k-means algorithm is actually quite akin to Gradient Descent, in
+the sense that the iterations are trying to improve the cost.
+Lemma 6.3.1.Given a set of points ⃗x1,⃗x2, . . . ,⃗xm, their mean ⃗y=1
+mm
+∑
+i=1⃗xi
+is the point that minimizes the average squared distance to the points.
+Proof. For any vector ⃗z, let C(⃗z)denote the sum of squared distance
+to the set of points. That is,
+C(⃗z) =m
+∑
+i=1∥⃗z−⃗xi∥2
+2=m
+∑
+i=1((⃗z−⃗xi)·(⃗z−⃗xi))
+=m
+∑
+i=1(⃗z·⃗z−2⃗z·⃗xi+⃗xi·⃗xi)
+=m
+∑
+i=1(∥⃗z∥2
+2−2⃗z·⃗xi+∥⃗xi∥2
+2)
+To find the optimal ⃗z, we set the gradient ∇Cto 0
+∇C(⃗z) =m
+∑
+i=1(2⃗z−2⃗xi) =0
+clustering 73
+which yields the solution
+⃗z=1
+mm
+∑
+i=1⃗xi
+We are ready to prove the main result.
+Theorem 6.3.2.Each iteration of the k-means Algorithm 6.3.1, possibly
+except for the last iteration before termination, strictly decreases the total
+cluster cost (6.1).
+Proof. We follow the same notation as in Algorithm 6.3.1. The total
+cost at the end of one iteration is:
+k
+∑
+i=1∑
+⃗x∈C′
+i⃗x−⃗y′
+i2
+2
+where ⃗y′
+iis the mean of the newly defined cluster C′
+i. Notice that
+each of the cluster cost ∑
+⃗x∈C′
+i⃗x−⃗y′
+i2
+2is the sum of the squared dis-
+tance between a set of points ⃗x∈C′
+iand their mean. By Lemma 6.3.1,
+this sum is smaller than the sum of squared distance between the
+same set of points to any other point. In particular, we can compare
+with⃗yi, the mean of Cibefore the update. That is,
+∑
+⃗x∈C′
+i⃗x−⃗y′
+i2
+2≤∑
+⃗x∈C′
+i∥⃗x−⃗yi∥2
+2
+for any 1 ≤i≤k. If we sum over all clusters, we see that
+k
+∑
+i=1∑
+⃗x∈C′
+i⃗x−⃗y′
+i2
+2≤k
+∑
+i=1∑
+⃗x∈C′
+i∥⃗x−⃗yi∥2
+2
+Now notice that the summand ∥⃗x−⃗yi∥2
+2in the right hand side of the
+inequality is the squared distance between the point ⃗xand the mean
+⃗yi(before update) of the cluster C′
+ithat⃗xis newly assigned to. In
+other words, we can rewrite this term as ∥⃗x−⃗yix∥2
+2and instead sum
+over all points ⃗xin the dataset. That is,
+k
+∑
+i=1∑
+⃗x∈C′
+i∥⃗x−⃗yi∥2
+2=∑
+⃗x∈D∥⃗x−⃗yix∥2
+2
+Finally, recall that the index ixwas defined as ix=arg min i∥⃗x−⃗yi∥2.
+In particular, if jwas the index of the cluster that a data point ⃗x
+originally belonged to, then ∥⃗x−⃗yix∥2
+2≤⃗x−⃗yj2
+2. Therefore, we
+have the following inequality,
+∑
+⃗x∈D∥⃗x−⃗yix∥2
+2≤k
+∑
+j=1∑
+⃗x∈Cj⃗x−⃗yj2
+2
+74 introduction to machine learning lecture notes for cos 324 at princeton university
+The equality holds in the inequality above if and only if when
+∥⃗x−⃗yix∥2
+2=⃗x−⃗yj2
+2for each point ⃗x, which means that the origi-
+nal cluster Cjwas one of the closest clusters to ⃗x. By the tie-breaker
+rule, ixwould have been set to j. This is exactly the case when the
+algorithm terminates immediately after this iteration since no point
+is reassigned to a different cluster. In all other cases, we have a strict
+inequality:
+∑
+⃗x∈D∥⃗x−⃗yix∥2
+2<k
+∑
+j=1∑
+⃗x∈Cj⃗x−⃗yj2
+2
+Notice that the right hand side of the inequality is the total cost at the
+beginning of the iteration.
+Now we are ready to prove that the k-means algorithm is guaran-
+teed to terminate in finite time. Since each iteration strictly reduces
+the cost, we conclude that the current clustering ( i.e., partition) will
+never be considered again, except at the last iteration when the al-
+gorithm terminates. Since there is only a finite number of possible
+partitions of the dataset D, the algorithm must terminate in finite
+time.
+6.3.3k-Means Algorithm and Digit Classification
+You might be familiar with the MNIST hand-written digits dataset.
+Here, each image, which depicts some digit between 0and 9, is
+represented as a an 8×8matrix of pixels and each pixel can take on a
+different luminosity value from 0 to 15.
+We can apply k-means clustering to differentiate between images
+depicting the digit “ 1” and the digit “ 0.” After running the model
+with k=2on360images of the two digits, we achieve the clusters in
+Figure 6.2.5Note the presence of two colored regions: a point is col-5This 2D visualization of the clusters
+is achieved through a technique called
+low dimensional representation, which
+is covered in Chapter 7.ored red if a hypothetical held-out data point at that location would
+get assigned a “ 0;” otherwise it is colored blue. This assignment is
+based on which cluster center is closer.
+Figure 6.2: Sample images from the
+MNIST dataset (left) and 2Dvisu-
+alization of the k-means clusters
+differentiating between the digits “ 1”
+and “ 0” (right). Only two images were
+misclassified!
+clustering 75
+This example also shows that clustering into two clusters can be
+turned into a technique for binary classification — use training data
+to come up with two clusters; at test time, compute a ±1label for
+each data point according to which of the two cluster centers it is
+closer to.
+6.3.4Implementation Detail: How to Pick the Initial Clustering
+The choice of initial clusters greatly influences the quality of the
+solution found by the k-means algorithm. The most naive method is
+to pick kdata points randomly to serve as the initial cluster centers
+and create kclusters by assigning each data point to the closest
+cluster center. However, this approach can be problematic. Suppose
+there exists some “ground truth” clustering of the dataset. By picking
+the initial clusters randomly, we may end up splitting one of these
+ground truth clusters ( e.g., two initial centers are drawn from within
+the same ground truth cluster), and the final clustering ends up
+being very sub-optimal. Thus one tries to select the initial clustering
+more intelligently. For instance the popular k-means++ initialization
+procedure6is the following:6It was invented by Arthur and Vassil-
+vitskii in 2007.
+1. Choose one center uniformly at random among all data points.
+2.For each data point ⃗xcompute D(⃗x), the distance between ⃗xand
+the nearest center which has already been chosen.
+3.Choose a new data point at random as a new center, where a
+point ⃗xis chosen with probability proportional to D(⃗x)2.
+4. Repeat steps 2 and 3 until kcenters have been chosen.
+In COS 324, we will not expect you to understand why this is a
+good initialization procedure, but you may be expected to be able to
+implement this or similar procedures in code.
+6.3.5Implementation Detail: Choice of k
+Above we assumed that the number of clusters kis given, but in
+practice you have to choose the appropriate number of clusters k.
+Example 6.3.3.Is there a value of kthat guarantees an optimum cost of
+0? Yes! Just set k=n(i.e., each point is its own cluster). Of course, this is
+useless from a modeling standpoint!
+Problem 6.3.4.Argue that the optimum cost for k+1clusters is no more
+than the optimum cost for k clusters.
+76 introduction to machine learning lecture notes for cos 324 at princeton university
+Note that Problem 6.3.4only concerns the optimum cost, which
+as we discussed may not be attained by the k-means algorithm.
+Nevertheless, it does suggest that we can try various values of kand
+see when the cost is low enough to be acceptable.
+A frequent heuristic is the elbow method : create a plot of the num-
+ber of clusters vs. the final value of the cost as in Figure 6.3and look
+for an “elbow” where the objective tapers off. Note that if the dataset
+is too complicated for a simple Euclidean distance cost, the data
+might not be easy to cluster “nicely” meaning there is no “elbow”
+shown on the plot.
+Figure 6.3: Two graphs of number of
+clusters vs. final value of cost. There is
+a distinct elbow on the left, but not on
+the right.
+6.4Clustering in Programming
+In this section, we briefly discuss how to implement k-means algo-
+rithm for digit classification in Python. As usual, we use the numpy
+package to speed up computation and the matplotlib package for vi-
+sualization. Additionally, we use the sklearn package to help perform
+the clustering.
+# import necessary packages
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import load _digits
+from sklearn.preprocessing import scale
+from sklearn.decomposition import PCA
+# prepare dataset
+X, y = load _digits(n _class=2, return _X_y=True)
+X = scale(X)
+X_train, X _test = ...
+# define functions
+def initialize _cluster _mean(X, k):
+# X: array of shape (n, d), each row is a d-dimensional data point
+# k: number of clusters
+# returns Y: array of shape (k, d), each row is the center of a cluster
+def assign _cluster(X, Y)
+# X: array of shape (n, d), each row is a d-dimensional data point
+# Y: array of shape (k, d), each row is the center of a cluster
+# returns loss, the sum of squared distance from each point to its
+assigned cluster
+clustering 77
+# returns C: array of shape (n), each value is the index of the closest
+cluster
+def update _cluster _mean(X, k, C):
+# X: array of shape (n, d), each row is a d-dimensional data point
+# k: number of clusters
+# C: array of shape (n), each value is the index of the closest cluster
+# returns Y: array of shape (k, d), each row is the center of a cluster
+def k_means(X, k, max _iters=50, eps=1e-5):
+Y = initialize _cluster _mean(X, k)
+for iin range (max _iters):
+loss, C = assign _cluster(X, Y)
+Y = update _cluster _mean(X, k, Y)
+ifloss _change < eps:
+break
+return loss, C, Y
+def scatter _plot(X, C):
+plt.figure(figsize=(12, 10))
+k = int(C.max()) + 1
+from itertools import cycle
+colors = cycle(’bgrcmk’)
+for iin range (k):
+idx = (C == i)
+plt.scatter(X[idx, 0], X[idx, 1], c= next (colors))
+plt.show()
+# run k-means algorithm and plot the result
+loss, C, Y = k _means(X _train, 2)
+low_dim = PCA(n _components=2).fit _transform(X _train)
+scatter _plot(low _dim, C)
+We start by importing outside packages.
+from sklearn.datasets import load _digits
+from sklearn.preprocessing import scale
+from sklearn.decomposition import PCA
+The load_digits() method loads the MNIST digits dataset, with around
+180data points per digit. The scale() method linearly scales each of
+the data points such that the mean is 0and variance is 1. The PCA()
+method helps visualize the MNIST digits data points, which are 64-
+dimensional, in the Cartesian plane ( i.e.,R2). See the next Chapter 7
+for details on this process.
+Next we prepare the dataset by calling the load_digits() method.
+X, y = load _digits(n _class=2, return _X_y=True)
+X = scale(X)
+X_train, X _test = ...
+Notice that we discard the target array ybecause we are performing
+clustering, a type of unsupervised learning. If we were to perform
+supervised learning instead, we would need to make use of y.
+78 introduction to machine learning lecture notes for cos 324 at princeton university
+Then we define the functions necessary for the k-means algorithm.
+def initialize _cluster _mean(X, k):
+return Y
+def assign _cluster(X, Y)
+return loss, C
+def update _cluster _mean(X, k, C):
+return Y
+def k_means(X, k, max _iters=50, eps=1e-5):
+Y = initialize _cluster _mean(X, k)
+for iin range (max _iters):
+loss, C = assign _cluster(X, Y)
+Y = update _cluster _mean(X, k, Y)
+ifloss _change < eps:
+break
+return loss, C, Y
+In practice, it is common to limit the number of cluster update itera-
+tions ( i.e., the parameter max_iters ) and specify the smallest amount
+of loss change allowed for one iteration ( i.e., the constant ϵ). By termi-
+nating the algorithm once either one of the conditions is reached, we
+can get an approximate solution within a reasonable amount of time.
+Next, take a look at the helper function used to plot the result of
+thek-means algorithm.
+def scatter _plot(X, C):
+plt.figure(figsize=(12, 10))
+k = int(C.max()) + 1
+from itertools import cycle
+colors = cycle(’bgrcmk’)
+for iin range (k):
+idx = (C == i)
+plt.scatter(X[idx, 0], X[idx, 1], c= next (colors))
+plt.show()
+The cycle() method from the itertools package lets you iterate through
+an array indefinitely, with the index wrapping around back to the
+start, once it reaches the end of the array.
+Now, consider the forloop section in the helper function above. We
+first use Boolean conditions to concisely generate a new array.
+idx = (C == i)
+This generates a Boolean array with the same length as C, where each
+entry is either True/False based on whether the corresponding entry in
+Cis equal to i. The following code is equivalent.
+idx = np.zeros(C.size)
+for jin range (C.size):
+clustering 79
+idx[j] = (C[j] == i)
+We then use a technique called Boolean masking to extract a particular
+subset of rows of X.
+X[idx, 0]
+Notice that in place of a list of indices of rows to extract, we are
+indexing with the Boolean array we just defined. The code will extract
+only the rows where the Boolean value is True. For example, if the
+value of idxis[True, False, True] , then the code above is equivalent to
+X[[0, 2], 0]
+Finally, we make use of the helper functions we defined earlier to
+run the k-means algorithm and plot results.
+_, C, _= k_means(X _train, 2)
+low_dim = PCA(n _components=2).fit _transform(X _train)
+scatter _plot(low _dim, C)
+The first line of this code snippet shows how we can use the _symbol
+to selectively disregard individual return values of a function call.
+The second line of code uses the PCA() method to transform the
+64-dimensional data X_train into 2-dimensional data so that we can
+visualize it with the scatter_plot() method. We will learn the details of
+this process in the next Chapter 7.
+
+7
+Low-Dimensional Representation
+High-dimensional datasets arise in quite a few settings. This chapter
+concerns a phenomenon that arises frequently: the data points ( i.
+e., vectors) collectively turn out to be “approximately low rank.” A
+running theme in this chapter is that arrays and matrices, which in
+introductory courses like COS 126and COS 226were thought of as
+data structures ( i.e., an abstraction from programming languages),
+are treated now as objects that we can pass through some remarkable
+(but simple) mathematical procedures.
+If a large dataset of Nvectors in Rdhas rank k, then we can think
+of a natural compression method. Let Ube the k-dimensional sub-
+space spanned by the vectors, and identify kbasis vectors for U. For
+each of the Nvectors, find the kcoefficients of their representation
+in terms of the basis vectors. Following this method, instead of spec-
+ifying the Nvectors using Ndreal numbers, we can represent them
+using k(N+d)real numbers, which is a big win if dis much larger
+than k.
+Figure 7.1:⃗v1,⃗v2,⃗v3∈R3(left) and
+their 2-dimensional representations
+b⃗v1,b⃗v2,b⃗v3∈R2.
+Example 7.0.1.Figure 7.1shows three vectors ⃗v1= (3.42,−1.33, 6.94 ),⃗v2=
+(7.30, 8.84, 1.95 ),⃗v3= (−7.92,−6.37,−5.66)inR3. The three vectors
+have rank 2— they are all in the 2-dimensional linear subspace generated
+82 introduction to machine learning lecture notes for cos 324 at princeton university
+by⃗u1= (8, 8, 4 )and⃗u2= (1,−4, 6). Specifically,
+⃗v1=0.31⃗u1+0.95⃗u2
+⃗v2=0.95⃗u1−0.31⃗u2
+⃗v3=−0.95⃗u1−0.31⃗u2
+Therefore, we can represent these vectors in a 2-dimensional plane, as
+b⃗v1= (0.31, 0.95 ),b⃗v2= (0.95,−0.31),b⃗v3= (−0.95,−0.31)
+7.1Low-Dimensional Representation with Error
+Of course, in general, high dimensional datasets are not exactly
+low rank. We’re interested in datasets which have low-dimension
+representations once we allow some error .
+Definition 7.1.1(Low-dimensional Representation with Error) .We
+say a set of vectors ⃗v1,⃗v2, . . . ,⃗vN∈Rdhasrank kwith mean-squared
+error ϵif there exist some basis vectors ⃗u1,⃗u2, . . . ,⃗uk∈RdandNvectors
+b⃗v1,b⃗v2, . . . ,b⃗vN∈span(⃗u1,⃗u2, . . . ,⃗uk)such that
+1
+N∑
+i⃗vi−b⃗vi2
+2≤ϵ (7.1)
+We say that b⃗v1, . . . ,b⃗vNare the low-rank orlow-dimensional approxi-
+mation of ⃗v1, . . . ,⃗vN. Typically we will assume without loss of generality
+that the basis vectors are orthonormal (i.e., have ℓ2norm equal to 1and are
+pairwise orthogonal).
+Definition 7.1.1can be thought of as a lossy compression of the
+dataset of vectors since the low-dimensional representation of vectors
+is roughly correct, but with a bound of ϵon the MSE. This compres-
+sion view will be used in Section 7.3.
+Figure 7.2:⃗v1,⃗v2,⃗v3∈R3(left) and
+their 2-dimensional approxima-
+tionsb⃗v1,b⃗v2,b⃗v3represented in the
+2-dimensional subspace spanned by
+⃗u1,⃗u2.
+low -dimensional representation 83
+Example 7.1.2.Figure 7.2shows three vectors ⃗v1= (3.42,−1.33, 6.94 ),⃗v2=
+(7.30, 8.84, 1.95 ),⃗v3= (−6.00,−7.69,−6.86)inR3. The three vectors
+have rank 2with mean-squared error 2.5. If you choose the basis vec-
+tors⃗u1= (8, 8, 4 ),⃗u2= (1,−4, 6)and the low-rank approximations
+b⃗v1=⃗v1,b⃗v2=⃗v2,b⃗v3= (−7.92,−6.37,−5.66)∈span(⃗u1,⃗u2)then,
+1
+3∑
+i⃗vi−b⃗vi2
+2≃2.28≤2.5
+Note that the basis vectors in this example are only orthogonal and not
+orthonormal, but it is easy to set them as orthonormal by normalizing them.
+Problem 7.1.3.Show that if ⃗u1,⃗u2, . . . ,⃗uk∈Rdis any set of orthonor-
+mal vectors and ⃗v∈Rdthen the vector b⃗vinspan(⃗u1,⃗u2, . . . ,⃗uk)that
+minimizes⃗v−b⃗v2
+2is
+k
+∑
+j=1(⃗v·⃗uj)⃗uj (7.2)
+(Hint: If α1,α2, . . . , αkminimize⃗v−∑jαj⃗uj2
+2then the gradient of this
+expression with respect to α1,α2, . . . , αkmust be zero.)
+Problem 7.1.3illustrates how to find the low-dimensional represen-
+tation of the vectors, once we specify the kbasis vectors. Notice that
+(7.2)is the vector projection of⃗vonto the subspace Uspanned by the
+vectors ⃗u1,⃗u2, . . . ,⃗uk. Therefore, the approximation error⃗v−b⃗v2
+2is
+the squared norm of the component of ⃗vthat is orthogonal to U.1 1Also known as the vector rejection of⃗v
+from U.Problem 7.1.4is only for more advanced students but all students
+should read its statement to understand the main point. It highlights
+how miraculous it is that real-life datasets have low-rank represen-
+tations. It shows that generically one would expect ϵin(7.1)to be
+1−k/n, which is almost 1when k≪n. And yet in real life ϵis small
+for fairly tiny k.
+Problem 7.1.4.Suppose the ⃗vi’s are unit vectors2and the vectors2Note: the maximum possible value
+ofϵwhen ⃗vi’s are unit vectors is 1.
+Convince yourself!⃗u1,⃗u2, . . . ,⃗ukwere the basis vectors of a random k-dimensional subspace in
+Rd. (That is, chosen without regard to the ⃗vi’s.) Heuristically argue that the
+ϵone would need in (7.1)would be 1−k/n.
+7.1.1Computing the Low-Dimensional Representation with Error
+In Problem 7.1.3, we have already seen how to find the low-dimension
+representation with error, once we are given the basis vectors. All
+there remains is to identify a suitable value of kand find the corre-
+sponding basis vectors that will minimize the error.
+There is a simple linear algebraic procedure, the Singular Value
+Decomposition (SVD) . Given a set of vectors ⃗viand a positive integer
+84 introduction to machine learning lecture notes for cos 324 at princeton university
+k, SVD can output the best orthonormal basis in sense of Defini-
+tion7.1.1that has the lowest possible value of ϵ. In practice, we treat
+kas a hyperparameter and use trial and error to find the most suit-
+able k. Problem 7.1.5shows that the accuracy of the low-dimensional
+representation will decrease when we choose a smaller number of
+dimensions. So we are making a choice between the accuracy of the
+representations against how condensed our compression is.
+Problem 7.1.5.Show that as we decrease kin Definition 7.1.1, the corre-
+sponding ϵcan only increase (i.e., cannot decrease).
+Formally, SVD takes a matrix as its input; the rows of this matrix
+are the vector ⃗vi’s. The procedure operates on this matrix to output
+a low-rank approximation. We discuss details in Section 20.3. To
+follow the rest of this chapter, you do not need to understand details
+of the procedure. You just need to remember the fact that the best
+k-dimensional representation is computable for each k. In practice,
+programming languages have packages that will do the calculations
+for you. Below is a Python code snippet that will calcuate the SVD.
+import sklearn.decomposition.TruncatedSVD
+# n *n matrix
+data = ...
+# prepare transform on dataset matrix "data"
+svd = TruncatedSVD(n _components=k)
+svd.fit(data)
+# apply transform to dataset and output an n *k matrix
+transformed = svd.transform(data)
+Now we see some fun applications.
+7.2Application 1: Stylometry
+In many cases in old literature, the identity of the author is disputed.
+For instance, the King James Bible ( i.e., the canonical English bible
+from the 17th century) was written by a team whose identities and
+work divisions are not completely known. Similarly the Federalist
+Papers , an important series of papers explicating finer points of the
+US government and constitution, were published in the early days of
+the republic with the team of authors listed as Alexander Hamilton,
+James Madison, and John Jay. But it was not revealed which paper
+was written by whom. In such cases, can machine learning help
+identify who wrote what?
+Here we present a fun example about the books in the Wizard of
+Oz series.3L. Frank Baum was the author of the original Wonderful3Original paper at http://dh.
+obdurodon.org/Binongo-Chance.pdf .
+A survey paper by Erica Klarreich in
+Science News Dec 2003 :Statistical tests
+are unraveling knotty literary mysteries
+athttp://web.mit.edu/allanmc/www/
+stylometrics.pdfWizard of Oz , which was a best-seller in its day and remains highly
+popular to this day. The publisher saw a money-making opportunity
+low -dimensional representation 85
+and convinced Baum to also write 15follow-up books. After Baum’s
+death the publisher managed to pass on the franchise to Ruth Plumly
+Thompson, who wrote many other books.
+Figure 7.3:Royal Book of Oz
+(1921 ). Cover image from https:
+//en.wikipedia.org/wiki/The _Royal _
+Book _of_OzHowever, the last of the Baum books, Royal Book of Oz (RBOO), al-
+ways seemed to Oz readers closer in style to Thompson’s books than
+to Baum’s. But with all the principals in the story now dead, there
+seemed to be no way to confirm the suspicion. Now we describe how
+simple machine learning showed pretty definitively that this book
+was indeed written by Ruth Plumly Thompson. The main idea is to
+represent the books vectors in some way and then find their low-rank
+representations.
+The key idea is that different authors use English words at differ-
+ent frequencies. Surprisingly, the greatest difference lies in frequen-
+cies of function words such as with ,however ,upon , rather than
+fancy vocabulary words (the ones found on your SAT exam).
+Example 7.2.1.Turns out Alexander Hamilton used upon about 10
+times more frequently than James Madison. We know this from analyzing
+their individual writing outside their collaboration on the Federalist Papers.
+Using these kinds of statistics, it has been determined that Hamilton was
+the principal author or even the sole author of almost all of the Federalist
+Papers.
+The statistical analysis of the Oz books consisted of looking at the
+frequencies of 50function words. All Oz books except RBOO were
+divided into text blocks of 5000 words each. For each text block, the
+frequency ( i.e., number of occurrences) of each function word was
+computed, which allows us to represent the block as a vector in R50.
+There were 223 text blocks total, so we obtain 223 vectors in R50.
+Figure 7.4: The top 50most frequently
+used function words in the Wizard
+of Oz series. Their occurrences were
+counted in 223text blocks. Figure from
+Binongo’s paper.
+Then we compute a rank 2 approximation of these 223 vectors.
+Figure 7.5shows the scatter plot in the 2-dimensional visualization.
+The two axes correspond to the two basis vectors we found for the
+rank 2approximation. It becomes quickly clear that the vectors from
+the Baum books are in a different part of the space than those from
+the Thompson books. It is also clear that RBOO vectors fall in the
+86 introduction to machine learning lecture notes for cos 324 at princeton university
+Figure 7.5: Rank- 2visualization of the
+223text block vectors from books of
+Oz. The dots on the left correspond
+to vectors from Oz books known to be
+written by Ruth Plumly Thompson. The
+hearts on the left correspond to vectors
+from RBOO. The ones on the right
+correspond to ones written by L. Frank
+Baum. Figure from Binongo’s paper.
+same place as those from other Thompson books. Conclusion: Ruth
+Plumly Thompson was the true author of Royal Book of Oz!
+By the way, if one takes the non-Oz writings of Baum and Thomp-
+son and plot their vectors in the 2D-visualization in Figure 7.6, they
+also fall on the appropriate side. So the difference in writing style
+came across clearly even in non-Oz books!
+Figure 7.6: Rank- 2visualization of text
+block vectors from books written by
+Baum and Thompson outside of the Oz
+series. Figure from Binongo’s paper.
+low -dimensional representation 87
+7.3Application 2: Eigenfaces
+This section uses the lossy compression viewpoint of low-rank rep-
+resentations. As you may remember from earlier computer science
+courses ( e.g., Seam Carver from COS 226), images are vectors of
+pixel values. In this section, let us only consider grayscale ( i.e., B&W)
+images where each pixel has an integer value in [−127, 127 ].−127
+corresponds to the pixel being pitch black; 0corresponds to middle
+gray; and 127corresponds to total white. We can also reorganize the
+entries to form a single vector:
+
+a11 a12· · · a1n
+a21 a22· · · a2n
+.........
+am1am2· · · amn
+→(a11,a12,· · ·,a1n,a21,· · ·,a2n,· · ·,amn)
+Once we have this vectorized form of an image, it is possible to
+perform linear algebraic operations on the vectors. For example, we
+can take 0.3times the first image and add it to −0.8times the second
+image, etc. See Figure 7.7for some of these examples.
+Figure 7.7: Example of linear algebra on
+images.
+Eigenfaces was an idea for face recognition4. The dataset in this4L. Sirovich; M. Kirby ( 1987 ).Low-
+dimensional procedure for the character-
+ization of human faces . Journal of the
+Optical Society of America.lecture is from a classic Olivetti dataset from 1990 s. Researchers
+took images of people facing the camera in good light, downsized
+to64×64pixels. This makes them vectors in R4096. Now we can
+find a 64-rank approximation of the vectors using procedures we will
+explore in more detail in Section 20.3.
+Figure 7.8shows four basis vectors in the low-rank approximation
+of the images. The first image looks like a generic human with a
+ill-defined nose and lips; the second image looks like having glasses
+and a wider nose; the third image potentially looks like a female
+face; the fourth image looks like having glasses, a moustache, and
+a beard. All images in the dataset can be approximated as a linear
+88 introduction to machine learning lecture notes for cos 324 at princeton university
+Figure 7.8: Some basis vectors (which
+turn out to be face-like) in the low-rank
+approximation of the Olivetti dataset.
+combination of 128of these basis images, and the approximations are
+surprisingly accurate. Figure 7.9shows four original images of the
+dataset, compared with their 64-rank approximations and 128-rank
+approximations.
+Figure 7.9:4original images in the
+Olivetti dataset (left), compared with
+their 64-rank approximations (middle)
+and 128-rank approximations (right).
+From Figure 7.9, we also see that the approximations are more
+accurate when the corresponding value of kis larger. In fact, Fig-
+ure7.10shows the average value of∥⃗vi−b⃗vi∥2
+2
+∥⃗vi∥2
+2as a function of the
+rank of the approximation. Note that this value roughly represents
+thefraction of ⃗vlost in the approximation . It can be seen that the error
+is a decreasing function in terms of k.5However, note that doing5This was also explored in Prob-
+lem7.1.5machine learning — specifically face recognition — on low-rank
+representations is computationally more efficient particularly because
+the images are compressed to a lower dimension. With a smaller
+value of k, we can improve the speed of the learning.
+Figure 7.10: What fraction of norm
+of the image is not captured in the
+low-dimensional representation, plotted
+versus the rank k.
+8
+n-Gram Language Models
+In this chapter, we continue our investigation into unsupervised
+learning techniques and now turn our attention to language mod-
+els. You may have heard of natural language processing (NLP) and
+models such as GPT- 3in the news lately. The latter is quite impres-
+sive, being able to write and publish its own opinion article on a
+reputable news website!1While most of these models are trained1The full piece can be found at
+https://www.theguardian.com/
+commentisfree/2020/sep/08/
+robot-wrote-this-article-gpt-3using state-of-the-art deep learning techniques which we will discuss
+later on in this text, this chapter explores a key idea, which is to view
+language as the output of a probabilistic process, which leads to an
+interesting measure of the “goodness” of the model. Specifically, we
+will investigate the so-called n-gram language model .
+8.1Probabilistic Model of Language
+Classical linguistics focused on the syntax or the formal grammar of
+languages. The linguists believed that a language can be modeled
+by a set of sentences, constructed from a finite set of vocabularies
+and a finite set of grammatical rules. But this approach in language
+modeling had limited success in machine learning.
+Figure 8.1: An example of a syntax tree
+of an English sentence.
+Instead, the approach of machine learning in language models,
+90 introduction to machine learning lecture notes for cos 324 at princeton university
+pioneered by Claude Shannon, has been to learn the distribution of
+pieces of text.
+Figure 8.2: Claude Shannon, inventor
+of the n-gram language model in
+https://languagelog.ldc.upenn.edu/
+myl/Shannon1950.pdf . Picture from
+https://en.wikipedia.org/wiki/
+Claude _Shannon .In other words, the model assigns a probability to all conceivable
+finite pieces of English text (even those that have not yet been spoken
+or written). For example, the sentence “how can I help you” will be
+assigned some probability, most likely larger than the probability
+assigned to the sentence “can I how you help.” Note that we don’t
+expect to find a “correct” model; all models found to date are ap-
+proximations. But even an approximate probabilistic model can have
+interesting uses, such as the following:
+1.Speech recognition: A machine processes a recording of a human
+speech that sounds somewhere between “I ate a cherry” and “eye
+eight a Jerry.” If the model assigns a higher probability score to the
+former, speech recognition can still work in this instance.
+2.Machine translation: “High winds tonight” should be considered a
+better translation than “large winds tonight.”
+3.Context sensitive spelling correction: We can compare the proba-
+bilities of sentences that are similar to the following sentence —
+“Their are problems wit this sentence.” — and output the cor-
+rected version of the sentence.
+4.Sentence completion: We can compare the probabilities of sentences
+that will complete the following phrase — “Please turn off your ...”
+— and output the one with the highest probability.
+8.2n-Gram Models
+Say we are in the middle of the process of assigning a probability
+distribution over all English sentences of length 5. We want to find
+the probability of the sentence “I love you so much.” If we let Xibe
+the random variable that represents the value of the i-th word, the
+probability we are looking for is the joint probability
+Pr[X1=”I”,X2=”love”,X3=”you”,X4=”so”,X5=”much ”](8.1)
+By the Chain Rule, we can split this joint probability into the product
+of a marginal probability and four conditional probabilities:
+(8.1)=Pr[X1=”I”] (8.2)
+×Pr[X2=”love”|X1=”I”]
+×Pr[X3=”you”|X1=”I”,X2=”love”]
+×Pr[X4=”so”|X1=”I”,X2=”love”,X3=”you”]
+×Pr[X5=”much ”|X1=”I”,X2=”love”,X3=”you”,X4=”so”]
+n-gram language models 91
+If we estimate all components of the product in (8.2), we will be able
+to estimate the joint probability ( 8.1).
+Now consider the bigram model , which has the following two
+assumptions:
+1.The probability of a word is only dependent on the immediately
+previous word.
+2.That probability does not depend on the position of the word in
+the sentence.
+The first assumption says that, for example, the conditional proba-
+bility
+Pr[X3=”you”|X1=”I”,X2=”love”]
+can be simplified as
+Pr[X3=”you”|X2=”love”]
+The second assumption says that
+Pr[X3=”you”|X2=”love”] =Pr[Xi+1=”you”|Xi=”love”]
+for any 1≤i≤4. We abuse notation and denote any of these
+probabilities as Pr [”you”|”love”].
+Applying these assumptions to ( 8.2), we can simplify it as
+(8.1)=Pr[”I”]×Pr[”love”|”I”]×Pr[”you”|”love”]
+×Pr[”so”|”you”]×Pr[”much ”|”so”] (8.3)
+Now we are going to estimate each component of (8.3)from a
+large corpus of text. The estimation for the marginal probability of
+the word “I” is given as
+Pr[”I”]≈Count("I")
+total number of words(8.4)
+where Count refers to the number of occurrences of the word in
+the text. In other words, this is the proportion of the occurrence of
+the word “I” in the entire corpus. Similarly, we can estimate the
+conditional probability of the word “love” given its previous word is
+“I” as
+Pr[”love”|”I”]≈Count("I love")
+∑
+wCount("I" + w)(8.5)
+where in the denominator, we sum over all possible words in the
+dictionary. This is the proportion of the word “love” occurring im-
+mediately after the word “I” out of every time some word win the
+dictionary occurring immediately after the word “I.”2In general, we2Notice that there is no word occurring
+immediately after the word “I” when
+“I” is at the end of the sentence in
+the training corpus. Therefore, the
+denominator in (8.5)is equal to the
+Count of “I” minus the Count of “I”
+at the end of a sentence. This is not
+necessarily the case when we introduce
+the sentence stop tokens in Section 8.3.
+92 introduction to machine learning lecture notes for cos 324 at princeton university
+can estimate the following conditional probability as
+Pr[wi+1|wi]≈Count( wiwi+1)
+∑
+wCount( wiw)(8.6)
+where wiis the i-th word of the sentence. Once we calculate these
+estimates from the corpus, we are able to define the probability of the
+sentence "I love you so much."
+8.2.1Defining n-Gram Probabilities
+We can extend the example above to a more general setting. Now we
+want to define the probability distribution over all sentences of length
+k(grammatical or not). Say we want to find the joint probability of
+the sentence w1w2. . .wkwhere wiis the i-th word of the sentence. We
+will employ an n-gram model which has two assumptions:
+1.The probability of a word is only dependent on the immediately
+previous n−1 words.3 3Ifn=1, the model is called a unigram
+model , and the probability is not de-
+pendent on any previous word. When
+n=2and n=3, the model is respec-
+tively called a bigram and a trigram
+model .2.That probability does not depend on the position of the word in
+the sentence.
+By a similar logic from the earlier example, we abuse notation
+and denote the joint probability of the sentence w1w2· · ·wkas
+Pr[w1w2. . .wk]; the marginal probability of the first word being
+w1asPr[w1]; and so on. We can apply the Chain Rule again to define
+then-gram model.
+Definition 8.2.1(n-Gram Model) .Ann-gram model assigns the following
+probability to the sentence w 1w2. . .wkif n>1:4 4max(1,i−n+1)in the third line is to
+ensure that we access the correct indices
+for the first n−1words, where there are
+less than n−1previous words to look
+at.Pr[w1w2. . .wk] =Pr[w1]Pr[w2|w1]· · ·Pr[wk|w1w2. . .wk−1]
+=Pr[w1]×k
+∏
+i=2Pr[wi|w1. . .wi−1]
+=Pr[w1]×k
+∏
+i=2Pr[wi|wmax(1,i−n+1). . .wi−1](8.7)
+and the following probability if n =1:
+Pr[w1w2. . .wk] =k
+∏
+i=1Pr[wi] (8.8)
+where the n-gram probabilities are estimated from a training corpus as the
+following
+Pr[wi]≈Count(w i)
+total number of words
+Pr[wj|wi. . .wj−1]≈Count(w i. . .wj−1wj)
+∑
+wCount(w i. . .wj−1w)
+n-gram language models 93
+This defines the “best” possible probabilistic model in terms of the
+Maximum Likelihood Principle from Subsection 4.2.1.5We now turn5We will prove this for n=1 later.
+to the following example.
+Example 8.2.2.We investigate a cowperson language which has two words
+in the dictionary: {Yee,Haw}. Suppose the training corpus is given as “Yee
+Haw Haw Yee Yee Yee Haw Yee.” Then the unigram probabilities can be
+estimated as
+Pr[”Yee”] =5
+8Pr[”Haw ”] =3
+8
+We can also create the bigram frequency table as in Table 8.1and we normal-
+ize the rows of the bigram frequency table to get the bigram probability table
+in Table 8.2.
+previousnext“Yee” “Haw” Total
+“Yee” 2 2 4
+“Haw” 2 1 3Table 8.1: Bigram frequency table of the
+cowperson language.
+previousnext“Yee” “Haw” Total
+“Yee” 2/4 2/4 1
+“Haw” 2/3 1/3 1Table 8.2: Bigram probabilty table of the
+cowperson language.
+From Table 8.2, we get the following bigram probabilities:
+Pr[”Yee”|”Yee”] =2
+4Pr[”Haw ”|”Yee”] =2
+4
+Pr[”Yee”|”Haw ”] =2
+3Pr[”Haw ”|”Haw ”] =1
+3
+Then by the bigram model, the probability that we see the sentence “Yee Haw
+Yee” out of all sentences of length 3can be calculated as
+Pr[”Yee”]×Pr[”Haw ”|”Yee”]×Pr[”Yee”|”Haw ”] =5
+8×2
+4×2
+3≃0.21
+8.2.2Maximum Likelihood Principle
+Recall the Maximum Likelihood Principle introduced in Subsec-
+tion4.2.1. It gave a way to measure the “goodness” of a model with
+probabilistic outputs.
+Now we formally prove that the estimation methods given in
+Definition 8.2.1satisfy the Maximum Likelihood Principle for the
+n=1case. A probabilistic model is “better” than another if it assigns
+more probability to the actual outcome. Here, the actual outcome is
+the training corpus, which also consists of words. So let us denote
+94 introduction to machine learning lecture notes for cos 324 at princeton university
+the training corpus as a string of words w1w2. . .wT. By definition, a
+unigram model will assign the probability
+Pr[w1w2. . .wT] =T
+∏
+i=1Pr[wi] (8.9)
+to this string. Remember that each of the wi’s are a member of a
+finite set of dictionary words. If we let Vbe the size of the dictionary,
+then the model is defined by the choice of Vvalues, the probabilities
+we assign to each of the dictionary words. Let pibe the probability
+that we assign to the i-th dictionary word, and let nibe the number
+of times that the i-th dictionary word appears in the training corpus.
+Then ( 8.9) can be rewritten as
+Pr[w1w2. . .wT] =V
+∏
+i=1pni
+i(8.10)
+We want to maximize this value under the constraintV
+∑
+i=1pi=1. A
+solution to this type of a problem can be found via the Lagrange
+multiplier method. We will illustrate with an example.
+Example 8.2.3.We revisit the cowperson language from Example 8.2.2. Here
+V=2andT=8. Let p1=Pr[”Yee”]and p2=Pr[”Haw ”]. Then the
+probability assigned to the training corpus by the unigram model is
+Pr[”Yee Haw Haw Yee Yee Yee Haw Yee ”] =p5
+1p3
+2
+We want to maximize this value under the constraint p1+p2=1. Therefore,
+we want to find the point where the gradient of the following is zero.
+f(p1,p2) =p5
+1p3
+2+λ(p1+p2−1)
+for some λ. The gradients are given as
+∂f
+∂p1=5p4
+1p3
+2+λ∂f
+∂p2=3p5
+1p2
+2+λ
+From 5p4
+1p3
+2+λ=3p5
+1p2
+2+λ=0, we getp1
+p2=5
+3. Combined with the fact
+that p 1+p2=1, we get the optimal solution p 1=5
+8and p 2=3
+8.
+Problem 8.2.4.Following the same Lagrange multiplier method as in
+Example 8.2.3, verify that the heuristic solution pi=ni
+T(the empirical fre-
+quency) is the optimal solution that maximizes (8.10)under the constraint
+V
+∑
+i=1pi=1.
+8.3Start and Stop Tokens
+In this section, we present a convention that is often useful: start
+token ⟨s⟩and stop token ⟨/s⟩. They signify the start and the end
+n-gram language models 95
+of each sentence in the training corpus. They are a special type of
+vocabulary item that will be augmented to the dictionary, so you
+will want to pay close attention to the way they contribute to the
+vocabulary size, number of words, and the n-gram probabilities.
+Also, by introducing these tokens, we are able to define a probability
+distribution over all sentences of finite length, not just a given length
+ofk. For the sake of exposition, we will only consider the bigram
+model for most parts of this section.
+8.3.1Re-estimating Bigram Probabilities
+Consider the cowperson language again.
+Example 8.3.1.The training corpus “Yee Haw Haw Yee Yee Yee Haw Yee”
+actually consists of three different sentences: ( 1) "Yee Haw," ( 2) "Haw Yee
+Yee," and ( 3) "Yee Haw Yee." We can append the start and stop tokens to the
+corpus and transform it into
+⟨s⟩Yee Haw ⟨/s⟩
+⟨s⟩Haw Yee Yee ⟨/s⟩
+⟨s⟩Yee Haw Yee ⟨/s⟩
+With these start and stop tokens in mind, we slightly relax the As-
+sumption 2of the n-gram model and investigate the probability of a
+word wbeing the first or the last word of a sentence, separately from
+other probabilities. We will denote these probabilities respectively as
+Pr[w|⟨s⟩]and Pr[⟨/s⟩|w]. The former probability will be estimated
+as
+Pr[w|⟨s⟩]≈Count( ⟨s⟩w)
+total number of sentences(8.11)
+which is the proportion of sentences that start with the word win the
+corpus. The latter probability is estimated as
+Pr[⟨/s⟩|w]≈Count( w⟨/s⟩)
+Count( w)(8.12)
+which is the proportion of the occurrence of wthat is at the end of a
+sentence in the corpus.
+Also, notice that other bigram probabilities are also affected when
+introducing the stop tokens. In (8.6), the denominator originally did
+not include the occurrence of the substring at the end of the sentence
+because there was no word to follow that substring. However, if we
+consider ⟨/s⟩as a word in the dictionary, the denominator can now
+include the case where the substring is at the end of the sentence.
+Therefore, the denominator is just equivalent to the Count of the
+substring in the corpus. Therefore, the bigram probabilities after
+introducing start, stop tokens can be estimated instead as6 6If we consider ⟨s⟩,⟨/s⟩as vocabularies
+of the dictionary, (8.13)can also include
+(8.11), (8.12).
+96 introduction to machine learning lecture notes for cos 324 at princeton university
+Pr[wj|wj−1]≈Count( wj−1wj)
+Count( wj−1)(8.13)
+Example 8.3.2.We revisit Example 8.2.2. The bigram frequency table and
+the bigram probability table can be recalculated as in Table 8.3and Table 8.4.
+77Note that the values in the Total
+column now correspond to the unigram
+count of that word.
+previousnext“Yee” “Haw” ⟨/s⟩Total
+⟨s⟩ 2 1 0 3
+“Yee” 1 2 2 5
+“Haw” 2 0 1 3Table 8.3: Bigram frequency table of the
+cowperson language with start and stop
+tokens.
+previousnext“Yee” “Haw” ⟨/s⟩Total
+⟨s⟩ 2/3 1/3 0/3 1
+“Yee” 1/5 2/5 2/5 1
+“Haw” 2/3 0/3 1/3 1Table 8.4: Bigram probabilty table of the
+cowperson language with start and stop
+tokens.
+Therefore, the bigram probabilities of the cowperson language, once we
+introduce the start and stop tokens, are given as
+Pr[”Yee”|⟨s⟩] =2
+3Pr[”Haw ”|⟨s⟩] =1
+3
+Pr[”Yee”|”Yee”] =1
+5Pr[”Haw ”|”Yee”] =2
+5Pr[⟨/s⟩|”Yee”] =2
+5
+Pr[”Yee”|”Haw ”] =2
+3Pr[”Haw ”|”Haw ”] =0
+3Pr[⟨/s⟩|”Haw ”] =1
+3
+8.3.2Redefining the Probability of a Sentence
+The biggest advantage of introducing stop tokens is that now we can
+assign a probability distribution over all sentences of finite length,
+not just a given length k. Say we want to assign a probability to the
+sentence w1w2. . .wk(without the start and stop tokens). By introduc-
+ing start and stop tokens, we can interpret this as the probability of
+w0w1. . .wk+1where w0=⟨s⟩and wk+1=⟨/s⟩. Following the similar
+logic from ( 8.2), we can define this probability by the Chain Rule.
+Definition 8.3.3(Bigram Model with Start, Stop Tokens) .A bigram
+model, once augmented with start, stop tokens, assigns the following proba-
+bility to a sentence w 1w2. . .wk8 8Notice that we do not have the term
+Pr[w0]in the expansion. A sentence
+always starts with a start token, so the
+marginal probability that the first word
+is⟨s⟩can be understood to be 1.Pr[w1w2. . .wk] =k+1
+∏
+i=1Pr[wi|wi−1] (8.14)
+where the bigram probabilities are estimated as in (8.13).
+n-gram language models 97
+Example 8.3.4.The probability that we see the sentence “Yee Haw Yee” in
+the cowperson language can be calculated as
+Pr[”Yee”|⟨s⟩]×Pr[”Haw ”|”Yee”]×Pr[”Yee”|”Haw ”]×Pr[⟨/s⟩|”Yee”]
+=2
+3×2
+5×2
+3×2
+5≃0.07
+Note that this probability is taken over all sentences of finite length.
+Problem 8.3.5.Verify that (8.14)defines a probability distribution over all
+sentences of finite length.
+8.3.3Beyond Bigram Models
+In general, if we have an n-gram model, then we may need to in-
+troduce more than 1start or stop tokens. For example, in a trigram
+model, we will need to define the probability that the word is the first
+word of the sentence as Pr[w|⟨s⟩ ⟨s⟩]. Based on the number of start
+and stop tokens introduced, the n-gram probabilities will need to be
+adjusted accordingly.
+8.4Testing a Language Model
+So far, we discussed how to define an n-gram language model given
+a corpus. This is analogous to training a model given a training
+dataset. Naturally, the next step is to test the model on a newly
+seen held-out data to ensure that the model generalizes well. In this
+section, we discuss how to test a language model.
+8.4.1Shakespeare Text Production
+First consider a bigram text generator — an application of the bi-
+gram model. The algorithm initiates with the start token ⟨s⟩. It then
+outputs a random word w1from the dictionary, according to the
+probability Pr[w1|⟨s⟩]. It then outputs the second random word
+w2from the dictionary, according to the probability Pr[w2|w1]. It
+repeats this process until the newly generated word is the stop to-
+ken⟨/s⟩. The final output of the algorithm will be the concatenated
+string of all outputted words.
+It is possible to define a text generator for any n-gram model in
+general. Figure 8.4shows the output of the unigram, bigram, trigram,
+quadrigram text generators when the models were trained on all
+Shakespeare texts.
+Notice the sentence “I will go seek the traitor Gloucester.” in the
+output of the quadrigram text generator. This exact line appears in
+King Lear , Act 3Scene 7. This is not a coincidence. Figure 8.5presents
+98 introduction to machine learning lecture notes for cos 324 at princeton university
+Figure 8.3: An example run of the
+bigram text generator.
+Figure 8.4: The outputs of unigram,
+bigram, trigram, quadrigram text
+generators trained on Shakespeare texts.
+the snapshot of the bigram, trigram, and quadrigram text generators
+once they have outputted the phrase “go seek the.” You can see that
+bigram models and trigram models assign very small probabilities to
+the word “traitor” because there are many more instances of phrases
+“the” or “seek the” in the corpus than “go seek the.” On the other
+hand, the quadrigram model assigns a very large probability to the
+word “traitor” because there is only a limited number of times that
+the phrase “go seek the” appears in the corpus.
+Figure 8.5: The probability of the next
+word given the previous three words
+are “go seek the” in the n-gram model,
+where n=2, 3, 4.
+Once the quadrigram model outputs the word “traitor” after the
+n-gram language models 99
+phrase “go seek the,” the problem is even worse. As can be seen
+in Figure 8.6, the quadrigram model assigns probability of 1to the
+word “Gloucester” meaning that the phrase “seek the traitor” only
+appears before the word “Gloucester.” So the model has memorized
+one completion of the phrase from the training text. From this exam-
+ple, we can see that text production based on n-grams is sampling
+and remixing text fragments seen in the training corpus.
+Figure 8.6: The probability of the next
+word given the previous three words
+are “seek the traitor.”
+The Shakespeare corpus consists of N=884, 647 words and V=
+29, 066 distinct words from the dictionary. There are about V2≈845
+million possible combinations of bigrams, but Shakespeare only used
+around 300, 000 of them in his text. So 99.96% of the possible bigrams
+were never seen. The percentage is much higher for quadrigrams!
+Furthermore, for the quadrigrams that do appear in the corpus,
+most do not even repeat. Thus what comes out of the quadrigram
+model looks like Shakespeare because it is a memorized fragment of
+Shakespeare.9 9Do this remind you of overfitting?
+8.4.2Perplexity
+Having described a way to train a simple language model, we now
+turn our attention to a formal way of testing10a language model.10This method is used even for testing
+state of the art models.Just like any other model in ML, a language model will be given
+a corpus w1w2. . .wT. Then we can assess the performance of the
+model by its perplexity on the corpus.
+Definition 8.4.1(Perplexity) .Theperplexity of a language model on the
+corpus w 1w2. . .wTis defined as
+Pr[w1w2. . .wT]−1
+T=Ts
+1
+Pr[w1w2. . .wT](8.15)
+Note that, perplexity is defined for any probabilistic language
+model: the Chain Rule of joint probability applies to every model,
+100 introduction to machine learning lecture notes for cos 324 at princeton university
+and does not require the n-gram assumptions. That is,11 11Assume for now that start and stop
+tokens do not exist in the corpus.
+Pr[w1w2. . .wT] =Pr[w1]×T
+∏
+i=2Pr[wi|w1. . .wi−1]
+Then the perplexity of the model can be rewritten as
+Tvuut1
+Pr[w1]×T
+∏
+i=21
+Pr[wi|w1. . .wi−1](8.16)
+Example 8.4.2.Consider the uniform (“clueless”) model which assumes that
+the probability of all words are equal in any given situation. That is, if Vis
+the vocabulary size (i.e., size of the dictionary),
+Pr[wi] =Pr[wi|w1. . .wi−1] =1
+V
+for any given w1, . . . , wi∈V. This model assigns
+1
+VT
+toevery sequence
+of T words, including the corpus. Therefore, the perplexity of the model is
+ 1
+VT!−1
+T
+=V
+Now we try to understand perplexity at an intuitive level. (8.16)is
+the geometric mean12of the following Tvalues:12The geometric mean ofTnumbers
+a1,a2, . . . , aTis defined as (∏iai)1/T
+1
+Pr[w1],1
+Pr[w2|w1], . . . ,1
+Pr[wT|w1. . .wT−1]
+Now note that a probabilistic model splits the total probability of 1
+to fractions and distributes them to the potential options for the next
+word. So the inverse of an assigned probability for a word can be
+thought roughly as the number of choices the model considered for the
+next word . With this viewpoint, perplexity as written in (8.16)means:
+how much has the model narrowed down the number of choices for the next
+word on average? The clueless model had not narrowed down the
+possibilities at all and had the worst-possible perplexity equal to the
+number of vocabulary words.
+Example 8.4.3.Consider a well-trained language model. At any given place
+of text, it can identify a set of 20words and assigns probability1
+20to each of
+them to be the next word. It happens that the next word is always one of
+the20words that the model identifies. The perplexity of the model is
+ 1
+20T!−1
+T
+=20
+Interestingly enough, the true perplexity of English is believed to
+be between 15and 20. That is, if at an “average” place in text, you
+ask humans to predict the next word, then they are able to narrow
+down the list of potential next words to around 15 to 20 words.13 13The perplexity of state of the art
+language models is under 20 as well.
+n-gram language models 101
+8.4.3Perplexity on Test Corpus
+The perplexity of a language model is analogous to a lossof an ML
+model.14Similar to ML models we have been studying so far, it is14It is customary to use the logarithm
+of the perplexity, as we also did for
+logistic loss in Chapter 4.possible to define a train perplexity and a test perplexity . The “good-
+ness” of the model will be defined by how low the perplexity was on
+a previously unseen, held-out data.
+For example, when n-gram models are trained on 38million words
+and tested on 1.5million words from Wall Street Journal articles,
+they show the following test perplexities in Table 8.5.15Note that15To be more exact, the models were
+augmented with smoothing, which will
+be introduced shortly.the state-of-the-art deep learning models achieve a test perplexity of
+around 20on the same corpus.
+Unigram Bigram Trigram
+962 170 109Table 8.5: Test perplexities of n-gram
+models on WSJ corpus.
+8.4.4Perplexity With Start and Stop Tokens
+When start and stop tokens are introduced to a corpus, we also need
+to redefine how to calculate the perplexity of the model. Again, we
+will only focus on a bigram model for the sake of exposition.
+Say the corpus consists of tsentences:
+⟨s⟩w1,1w1,2, . . . , w1,T1⟨/s⟩
+⟨s⟩w2,1w2,2, . . . , w2,T2⟨/s⟩
+...
+⟨s⟩wt,1wt,2, . . . , wt,Tt⟨/s⟩
+The probability of the corpus w1,1w1,2. . .wt,Ttis redefined as the
+product of the probability of each of the sentences:
+Pr[w1,1w1,2. . .wt,Tt] =t
+∏
+i=1Pr[wi,1wi,2. . .wi,Ti]
+=t
+∏
+i=1Ti+1
+∏
+j=1Pr[wi,j|wi,j−1] (8.17)
+Now we apply the interpretation of the perplexity that it is the geo-
+metric mean of probabilities of each word. Notice that we multiplied
+t
+∑
+i=1(Ti+1)probabilities to calculate the probability of the corpus.
+If we let T=t
+∑
+i=1Tidenote the total number of words (excluding
+start and stop tokens) of the corpus, the number of probabilities we
+multiplied can be written as T∗=T+t.16 16This can also be thought as adding
+the number of stop tokens to the
+number of words in the corpus.
+102 introduction to machine learning lecture notes for cos 324 at princeton university
+Definition 8.4.4(Perplexity with Start, Stop Tokens) .The perplexity of a
+bigram model with start, stop tokens can be redefined as
+T∗vuuuut1
+t
+∏
+i=1Ti+1
+∏
+j=1Pr[wi,j|wi,j−1](8.18)
+8.4.5Smoothing
+One big problem with our naive definition of the perplexity of a
+model is that it does not account for a zero denominator. That is,
+if the model assigns probability exactly 0to the corpus, then the
+perplexity of the model will be ∞!17 17Mathematically, it is undefined, but
+here assume that the result is a positive
+infinity that is larger than any real
+number.Example 8.4.5.Suppose the phrase “green cream” never appeared in the
+training corpus, but the test corpus contains the sentence “You like green
+cream.” Then a bigram model will have a perplexity of ∞because it assigns
+probability 0to the bigram “green cream.”
+To address this issue, we generally apply smoothing techniques,
+which never allow the model to output a zero probability. By reducing
+the naive estimate of seen events and increasing the naive estimate
+ofunseen events, we can always assign nonzero probabilities to
+previously unseen events.
+The most commonly used smoothing technique is the 1-add
+smoothing (a.k.a, Laplace smoothing). We describe how the smooth-
+ing works for a bigram model. The main idea of the 1-add smoothing
+can be summarized as “add 1to all bigram counts in the bigram
+frequency table.” Then the bigram probability as defined in Defini-
+tion8.2.1can be redefined as
+Pr[wj|wj−1]≈Count( wj−1wj)+1
+∑
+w(Count( wj−1w)+1)=Count( wj−1wj)+1
+∑
+w(Count( wj−1w)) +V
+(8.19)
+where Vis the size of the dictionary. If we had augmented the corpus
+with the start and the stop tokens, the denominator in (8.19)is just
+equal to Count( wj−1)+V∗18and so the bigram probability can be18V∗=V+1is the size of the dictionary
+after adding the start and the stop
+tokens. It is customary to add only
+one to the vocabulary count. It may
+help to look at the number of rows and
+columns in the bigram frequency table
+8.3.written as
+Pr[wj|wj−1]≈Count( wj−1wj)+1
+Count( wj−1)+V∗(8.20)
+Notice that the denominator is just V∗, the new vocabulary size,
+added to the unigram count of wj−1.
+Example 8.4.6.Recall the cowperson language with the start and stop
+tokens from Example 8.3.2. Upon further research, it turns out the language
+actually consists of three words: {Yee,Haw ,Moo}, but the training corpus
+n-gram language models 103
+“Yee Haw Haw Yee Yee Yee Haw Yee” left out one of the vocabularies in
+the dictionary. By applying add- 1smoothing to the bigram model, we can
+recalculate the bigram frequency and the bigram probability table as in
+Table 8.6and Table 8.7
+previousnext“Yee” “Haw” “Moo” ⟨/s⟩Total
+⟨s⟩ 3 2 1 1 7
+“Yee” 2 3 1 3 9
+“Haw” 3 1 1 2 7
+“Moo” 1 1 1 1 4Table 8.6: Bigram frequency table of the
+cowperson language with start and stop
+tokens with smoothing.
+previousnext“Yee” “Haw” “Moo” ⟨/s⟩Total
+⟨s⟩ 3/7 2/7 1/7 1/7 1
+“Yee” 2/9 3/9 1/9 3/9 1
+“Haw” 3/7 1/7 1/7 2/7 1
+“Moo” 1/4 1/4 1/4 1/4 1Table 8.7: Bigram probability table of
+the cowperson language with start and
+stop tokens with smoothing.
+The probability that we see the sentence "Moo Moo" in the cowperson
+language, which would have been 0before smoothing, is now assigned a
+non-zero value:
+Pr[”Moo ”|⟨s⟩]×Pr[”Moo ”|”Moo ”]×Pr[⟨/s⟩|”Moo ”]
+=1
+7×1
+4×1
+4≃0.01
+Problem 8.4.7.Verify that (8.19)defines a proper probability distribution
+over the conditioned event. That is, show that
+∑
+wPr[w|w′] =1
+for any w in the dictionary.
+Another smoothing technique is called backoff smoothing. The
+intuition is that n-gram probabilities are less likely to be zero if nis
+smaller. So when we run into an n-gram probability that is zero, we
+replace it with a linear combination of n-gram probabilities of lower
+values of n.
+Example 8.4.8.Recall Example 8.4.5. The bigram probability of “green
+cream” can be approximated instead as
+Pr[“cream′′|“green′′]≈Pr[“cream′′]
+Also, say we want to calculate the trigram probability of “like green cream,”
+which is also zero in the naive trigram model. We can approximate it instead
+as
+Pr[“cream′′|“like green′′]≈αPr[“cream′′] + (1−α)Pr[“cream′′|“green′′]
+104 introduction to machine learning lecture notes for cos 324 at princeton university
+where αis a hyperparameter for the model.
+There are other variants of the backoff smoothing,19with some19For instance, Good-Turing and
+Kneser-Ney smoothing.theory for what the “best” choice is, but we will not cover it in these
+notes.
+9
+Matrix Factorization and Recommender Systems
+9.1Recommender Systems
+Cataloging and recommender systems have always been an essential
+asset for consumers who find it difficult to choose from the vast scale
+of available goods. As early as 1876 , the Dewey decimal system was
+invented to organize libraries. In 1892 , Sears released their famed
+catalog to keep subscribers up to date with the latest products and
+trends, which amounted to 322pages. Shopping assistants at depart-
+ment stores or radio disc jockeys in the 1940 s are also examples of
+recommndations via human curation. In more contemporary times,
+bestseller lists at bookstores, or Billboard Hits list aim to capture
+what is popular among people. The modern recommender system
+paradigm now focuses on recommending products based on what is
+liked by people “similar” to you. In this long history of recommender
+systems, the common theme is that people like to follow trends , and
+recommender systems can help catalyze this process.
+9.1.1Movie Recommendation via Human Curation
+Suppose we want to design a recommender system for movies. A
+human curator identifies rbinary attributes that they think are im-
+portant for a movie ( e.g., is a romance movie, is directed by Steven
+Spielberg, etc.) Then they assign each movie an r-dimensional at-
+tribute vector , where each element represents whether the movie has
+the corresponding attribute ( e.g., coordinate 2will have value 1if a
+movie is a “thriller” and 0 otherwise).
+Now, using a list of movies that a particular user likes, the curator
+assigns an r-dimensional taste vector to a given user in a similar
+manner ( e.g., coordinate wwill have value 1if a user likes “thrillers”
+and 0otherwise). With these concepts in mind, we can start with
+defining the affinity of a user for a particular movie:
+106 introduction to machine learning lecture notes for cos 324 at princeton university
+Definition 9.1.1(User Affinity) .Given a taste vector Ai= (ai,1,ai,2, . . . , ai,r)
+for user iand the genre vector Bj= (b1,j,b2,j, . . . , br,j)for movie j, we de-
+fine the affinity of user ifor movie j as
+Ai·Bj=r
+∑
+k=1ai,kbk,j (9.1)
+Intuitively, this metric counts the number of attributes which are
+1in both vectors, or equivalently how many of the user’s boxes are
+“checked off” by the movie. Mathematically, the affinity is defined as
+a dot product, which can be extended to matrix multiplication. Thus
+if we have a matrix A∈Rm×rwhere each of mrows is a taste vector
+for a user and a matrix B∈Rr×nwhere each of ncolumns is a genre
+vector for a movie, the (i,j)entry of the matrix product M=AB
+represents the affinity score of user ifor movie j.
+We can also define an additional similarity metric:
+Definition 9.1.2(Similarity Metric) .Given taste vector Aifor user iand
+taste vector Ajfor user j, we define the similarity of user iand user j as
+r
+∑
+k=1ai,kaj,k (9.2)
+Similarly, the similarity of movie iand movie j is defined as
+r
+∑
+k=1bk,ibk,j (9.3)
+Finally, in practice, each individual is unique and has a different
+average level of affinity for movies (for example, some users like
+everything while others are very critical). This means that directly
+comparing the affinity of one user to another might not be helpful.
+One way to circumvent this problem is to augment (9.1)in Defini-
+tion9.1.1as
+r
+∑
+k=1ai,kbk,j+ai,0 (9.4)
+with a bias term ai,0.
+Based on the affinity scores or similarity scores, the human curator
+will be able to recommend movies to users. This model design seems
+like it does the job as a recommender system. In practice, developing
+such models through human curation comes with a set of pros and
+cons:
+•Pros: Using human curation allows domain expertise to be lever-
+aged and this intuition can be critical in the development of a
+good model ( i.e., which attribute is important). In addition, a
+human curated model will naturally be interpretable.
+matrix factorization and recommender systems 107
+•Cons: The process is tedious and expensive; thus it is difficult to
+scale. In addition, it can be difficult to account for niche demo-
+graphics and genres and this becomes a problem for companies
+with global reach.
+We conclude that while human curated models can certainly be
+useful, the associated effort is often too great.
+9.2Recommender Systems via Matrix Factorization
+In this section, we provide another technique that can be used for
+recommender systems — matrix factorization. This method started to
+become popular since 2005.
+9.2.1Matrix Factorization
+Matrix factorizations are a common theme throughout linear alge-
+bra. Some common techniques include LU and QR decomposition,
+Rank Factorization, Cholesky Decomposition, and Singular Value
+Decomposition.
+Definition 9.2.1(Matrix Factorization) .Suppose we have some matrix
+M∈Rm×n. Amatrix factorization is the process of finding matrices
+A∈Rm×r,B∈Rr×nsuch that M=ABfor some r <m,n.
+Unfortunately, these techniques become less directly applicable
+once we consider the case where most of the entries of Mare missing
+(i.e., a missing-data setting). As we saw in Section 9.1.1, this is very
+common in real-world applications — for example, if the (m,n)entry
+ofMrepresents the rating of user mfor movie n, most entries in M
+are missing because not everyone has seen every movie. What can we
+do in such a case?
+In turns out, if we assume that Mis a low-rank matrix (which is
+true for many high-dimensional datasets, as noted in Chapter 7), then
+we can consider an approximate factorization M≈ABon the known
+entries. We express this as the following optimization problem:
+Definition 9.2.2(Approximate Matrix Factorization) .Suppose we have
+some matrix M∈Rm×nwhere Ω⊂[m]×[n]is the subset of (i,j)where
+Mijis known. An approximate matrix factorization is the process of
+finding matrices A∈Rm×r,B∈Rr×nfor some r<m,nthat minimize the
+loss function:
+L(A,B) =1
+|Ω|∑
+(i,j)∈Ω(Mij−(AB)ij)2(9.5)
+We denote the approximation as M≈AB.
+108 introduction to machine learning lecture notes for cos 324 at princeton university
+Notice this form is familiar: we are effectively trying to find op-
+timal matrices A,Bwhich will minimize the MSE between known
+entries of Mand corresponding entries in the matrix product AB!
+One thing to note is that by calculating the matrix product AB, we
+can “predict” entries of Mthat are unknown.
+You can take the following result from linear algebra as granted.
+Theorem 9.2.3.Given M∈Rm×n, we can find the matrix factorization
+M=AB, with A∈Rm×randB∈Rr×nif and only if Mhas rank at most
+r. Also, we can find the approximate matrix factorization M≈AB, with
+A∈Rm×r,B∈Rr×nif and only if Mis “close to” rank r.
+9.2.2Matrix Factorization as Semantic Embeddings
+Recall the setup in Section 9.1.1. But instead of calculating the affinity
+matrix Mas the product of the matrices A,B, we will approach
+from the opposite direction. We will start with an affinity matrix
+M∈Rm×n(which is only partially known) and find its approximate
+matrix factorization M≈AB. We can understand that A∈Rm×r
+represents a set of users and that B∈Rr×nrepresents a set of
+movies.
+Figure 9.1: Matrix factorization on
+movie recommendations. Usually the
+inner dimension rwould be much
+smaller than m,n.
+Specifically, if we let Ai∗denote the i-th row of Aand B∗jdenote
+thej-th column of B, then Ai∗can be understood as the taste vector
+of user iand B∗jcan be understood as the attribute vector of movie
+j. One difference to note is that the output of a matrix factorization
+is real-valued, unlike the the 0/1 valued matrices A,Bfrom Sec-
+tion9.1.1. We can then use the vectors Ai∗and B∗jto find similar
+users or movies and make recommendations.
+Example 9.2.4.Assume all columns of Bhaveℓ2norm 1. That is,B∗j
+2=
+1for all j. When the inner product B∗j·B∗j′of two movie vectors is actually
+1, the two vectors are exactly the same! They have the same inner product
+with every user vector Ai∗— in other words these movies have the same
+appeal to all users. Now suppose B∗j·B∗j′is not quite 1but close to 1, say
+0.9. This means the movie vectors are quite close but not the same. Still,
+their inner product with typical user vectors will not be too different. We
+matrix factorization and recommender systems 109
+conclude that two movies j,j′with inner product B∗j·B∗j′close to 1tend
+to get recommended together to users. One can similarly conclude that high
+value of inner product between two user vectors is suggestive that the users
+have similar tastes.
+9.2.3Netflix Prize Competition: A Case Study
+During 2006 -09, DVDs were all the rage. Companies like Netflix were
+quite interested in recommending movies as accurately as possible
+in order to retain clients. At the time, Netflix was using an algorithm
+which had stagnated around RMSE =0.95.1Seeking fresh ideas,1RMSE is shorthand for√
+MSE .
+Netflix curated an anonymized database of 100Mratings (each rating
+was on a 1−5scale) of 0.5Musers for 18Kmovies. Adding a cash
+incentive of $1, 000, 000 , Netflix challenged the world to come up
+with a model that could achieve a much lower RMSE!2It turned out2This was an influential competi-
+tion, and is an inspiration for today’s
+hackathons, Kaggle, etc.that matrix factorization would be the key to achieving lower scores.
+In this example, m=0.5M,n=18k, andΩcorresponds to the 100M
+ratings out of m·n=10Baffinities.3 3Less than 1%of possible elements are
+accounted for by Ω.After a lengthy competition,4the power of matrix factorization is
+4Amazingly, a group of Princeton
+undergraduates managed to achieve the
+second place!on full display when we consider the final numbers:
+• Netflix’s algorithm: RMSE =0.95
+• Plain matrix factorization: RMSE =0.905
+• Matrix factorization and bias: RMSE =0.9
+• Final winner (an ensemble of many methods) : RMSE =0.856
+Figure 9.2:2D visualization of embed-
+dings of film vectors. Note that you
+see clusters of “artsy” films on top
+right, and romantic films on the bottom.
+Credit: Koren et al., Matrix Factorization
+Techniques for Recommender Systems ,
+IEEE Computer 2009 .
+110 introduction to machine learning lecture notes for cos 324 at princeton university
+9.2.4Why Does Matrix Factorization Work?
+In general, we need mnentries to completely describe a m×nmatrix
+M. However, if we find factor Minto the product M=ABofm×r
+matrix Aand r×nmatrix B, then we can describe Mwith essentially
+only (m+n)rentries. When ris small enough such that (m+n)r≪
+mn, some entries of M(including the missing entries) are not truly
+“required” to understand M.
+Example 9.2.5.Consider the matrix
+M=
+1 1 ∗2
+1 1 ∗ ∗
+4∗8∗
+4∗ ∗ ∗
+
+Is it possible to fill in the missing elements such that the rank of Mis1?
+Since r=1, it means that all the rows/columns of Mare the same up to
+scaling. By observing the known entries, the second row should be equal to
+the first row, and the third and the fourth row should be equal to the the first
+row multiplied by 4. Therefore, we can fill in the missing entries as
+M=
+1 1 2 2
+1 1 2 2
+4 4 8 8
+4 4 8 8
+
+It is not hard to infer that M=ABwhere A= (1, 1, 4, 4 )TandB=
+(1, 1, 2, 2 )
+Example 9.2.6.Consider another matrix
+M=
+1 1 ∗ ∗
+1 7 ∗ ∗
+4∗ ∗ 2
+∗4∗ ∗
+
+Is it possible to fill in the missing elements such that the rank of Mis1?
+This time, the answer is no. Following a similar logic from Example 9.2.5,
+the second row should be equal to the first row multiplied by a constant.
+This is not feasible since M 2,1/M1,1=1and M 2,2/M1,2=7.
+9.3Implementation of Matrix Factorization
+In this section, we look more deeply into implementing matrix fac-
+torization in an ML setting. As suggested in Definition 9.2.2, we can
+consider the process of approximating a matrix factorization to be an
+optimization problem. Therefore, we can use gradient descent.
+matrix factorization and recommender systems 111
+9.3.1Calculating the Gradient of Full Loss
+Recall that for an approximate matrix factorization of a matrix M, we
+want to find matrices A,Bthat minimize the following loss:
+L(A,B) =1
+|Ω|∑
+(i,j)∈Ω(Mij−(AB)ij)2(9.5revisited)
+Here (AB)ij=Ai∗·B∗j. Now we find the gradient of the loss
+L(A,B)by first finding the derivatives of Lwith respect to elements
+ofA(a total of mrderivatives), then finding the derivatives of Lwith
+respect to elements of B(a total of nrderivatives).
+First, consider an arbitrary element Ai′k′:
+∂
+∂Ai′k′L(A,B) =1
+|Ω|∑
+(i,j)∈Ω2(Mij−(AB)ij)∂
+∂Ai′k′(−(AB)ij)
+=1
+|Ω|∑
+j:(i′,j)∈Ω2(Mi′j−(AB)i′j)∂
+∂Ai′k′(−(AB)i′j)
+=1
+|Ω|∑
+j:(i′,j)∈Ω2(Mi′j−(AB)i′j)·(−Bk′j)
+=1
+|Ω|∑
+j:(i′,j)∈Ω−2Bk′j(Mi′j−(AB)i′j) (9.6)
+Note that the second step is derived because (AB)ij=∑kAikBkjand
+ifi̸=i′, then∂(AB)ij
+∂Ai′k′=0. Enumerating (i,j)∈Ωcan be changed to
+only enumerating (i′,j)∈Ω. Similarly, we can consider an arbitrary
+element Bk′j′:
+∂
+∂Bk′j′L(A,B) =1
+|Ω|∑
+(i,j)∈Ω2(Mij−(AB)ij)∂
+∂Bk′j′(−(AB)ij)
+=1
+|Ω|∑
+i:(i,j′)∈Ω2(Mij′−(AB)ij′)∂
+∂Bk′j′(−(AB)ij′)
+=1
+|Ω|∑
+i:(i,j′)∈Ω2(Mij′−(AB)ij′)·(−Aik′)
+=1
+|Ω|∑
+i:(i,j′)∈Ω−2Aik′(Mij′−(AB)ij′) (9.7)
+Whew! That’s a lot of derivatives, but we now have ∇L(A,B)at our
+disposal.
+9.3.2Stochastic Gradient Descent for Matrix Factorization
+Of course, we could use ∇L(A,B)for a plain gradient descent as
+shown in Chapter 3. However, given that each derivative in the
+gradient involves a sum over a large number of indices, it would be
+112 introduction to machine learning lecture notes for cos 324 at princeton university
+worthwhile to use stochastic gradient descent in order to estimate the
+overall gradient via a small random sample (as shown in Section 3.2).
+If we take a sample S⊂Ωof the known entries at each iteration,
+the loss becomes
+bL(A,B) =1
+|S|∑
+i,j∈S(Mij−(AB)ij)2(9.8)
+and the gradient becomes
+∂
+∂Ai′k′bL(A,B) =1
+|S|∑
+j:(i′,j)∈S−2Bk′j(Mi′j−(AB)i′j) (9.9)
+∂
+∂Bk′j′bL(A,B) =1
+|S|∑
+i:(i,j′)∈S−2Aik′(Mij′−(AB)ij′) (9.10)
+However, if we take a uniform sample SofΩ, the computation will
+not become much cheaper, since (i,j)∈Scan spread into many
+different rows and columns. One clever (and common) way to do
+so is to select a set of columns Cby sampling kout of the overall n
+columns. This method is called column sampling . We then only need
+to consider entries (i,j)∈Ωwhere j∈Cand compute gradients only
+for the entries Bk,jwhere j∈C. We can also perform row sampling
+in a very similar manner. In practice, whether we should use column
+sampling or row sampling, or gradient descent of full loss, depends
+on the actual sizes of mand n.
