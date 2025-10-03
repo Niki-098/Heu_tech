@@ -162,9 +162,7 @@ Update actor_api.py, reasoner.py, and controller.py with a supported model (e.g.
 
 
 **Connection Error:** Check port 8001:<br>
-netstat -a -n -o | find "8001"<br><br>
-
-
+netstat -a -n -o | find "8001"<br>
 Switch to 8002 if blocked.
 
 
